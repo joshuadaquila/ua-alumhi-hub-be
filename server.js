@@ -10,7 +10,10 @@ const fetchEvents = require('./dependency/fetchEvents');
 const notifications = require('./dependency/notifications');
 const messages = require('./dependency/message');
 const users = require('./dependency/users');
+const feed = require('./dependency/feed');
+const survey = require('./dependency/survey');
 const io = require('./dependency/socketio');
+
 
 const app = express();
 const port = 3001;
@@ -89,7 +92,7 @@ app.post('/signin', (req, res) => {
 
       if (isMatch) {
         const token = jwt.sign({ userId, name }, SECRET_KEY, {
-          expiresIn: '1h'
+          expiresIn: '24h'
         });
         res.send({ token, name });
       } else {
@@ -146,6 +149,10 @@ app.use('', authenticateToken, messages);
 
 // user
 app.use('', authenticateToken, users);
+
+// user
+app.use('', authenticateToken, feed);
+app.use('', authenticateToken, survey);
 
 // Start the server
 const server = app.listen(port, () => {

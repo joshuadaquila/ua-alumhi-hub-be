@@ -61,9 +61,9 @@ router.get('/getHappeningEvents', (req, res) => {
 
 router.post('/addEvent', (req, res) => {
   const userId = req.userId;
-  const { title, description, date, time, location, capacity, registrationdeadline } = req.body;
-  const sql = 'INSERT INTO events (title, description, date, time, location, capacity, registrationdeadline, staffid) VALUES (?,?,?,?,?,?,?,?)';
-    db.query(sql, [title, description, date, time, location, capacity, registrationdeadline, userId], (err, result) => {
+  const { title, description, date, time, endtime, location, capacity, registrationdeadline } = req.body;
+  const sql = 'INSERT INTO events (title, description, date, time, endtime, location, capacity, registrationdeadline, staffid) VALUES (?, ?,?,?,?,?,?,?,?)';
+    db.query(sql, [title, description, date, time, endtime, location, capacity, registrationdeadline, userId], (err, result) => {
       if (err) {
         console.error('Error executing query:', err);
         return res.status(500).send('Internal server error');
@@ -92,6 +92,7 @@ router.post('/registerEvent', (req, res) => {
 });
 
 router.post('/registerEvent', (req, res) => {
+  console.log("REGISTER EVENT");
   const userId = req.userId;
   const { eventid } = req.body;
 
@@ -136,9 +137,51 @@ router.get('/checkEvent', (req, res) => {
   const query = `SELECT * FROM registration WHERE eventid = ${eventid} and alumniid = ${userid} `;
   db.query(query, (err, results) => {
     if (err) {
-      res.status(400).json({ message: 'Error fetching events' });
+      console.log("CHECK STATUS FAILED", err);
+      res.status(400).json({ message: 'Error checking events' });
     } else {
+      console.log("CHECK STATUS OK");
       res.json(results);
+    }
+  });
+});
+
+router.post('/hideEvent', (req, res) => {
+  const userid = req.userId;
+  const { eventid } = req.body;
+  const query = `SELECT status FROM event WHERE eventid = ${eventid}`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      return res.status(400).json({ message: 'Error fetching events' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Message not found' });
+    }
+
+    const status = results[0].status;
+
+    if (status === "active") {
+      const sql = `UPDATE event SET status = "hidden" WHERE eventid = ${eventid}`;
+      db.query(sql, (err, result) => {
+        if (err) {
+          console.error('Error executing query:', err);
+          return res.status(500).send('Internal server error');
+        }
+        res.send(result);
+      });
+    } else if (status === "hidden") {
+      const sql = `UPDATE event SET status = "active" WHERE eventid = ${eventid}`;
+      db.query(sql, (err, result) => {
+        if (err) {
+          console.error('Error executing query:', err);
+          return res.status(500).send('Internal server error');
+        }
+        res.send(result);
+      });
+    } else {
+      return res.status(400).json({ message: 'Invalid status' });
     }
   });
 });

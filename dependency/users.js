@@ -26,9 +26,10 @@ router.get('/getAlumni', (req, res) => {
 
 
 
-router.get('/getUserInfo/:id', (req, res) => {
-  const userid = req.params.id;
+router.get('/getUserInfo', (req, res) => {
+  const userid = req.userId;
   const query = `SELECT * FROM user WHERE status = "active" and userid = ${userid}`;
+  console.log(query);
   db.query(query, (err, results) => {
     if (err) {
       res.status(400).json({ message: 'Error fetching users' });
@@ -39,6 +40,19 @@ router.get('/getUserInfo/:id', (req, res) => {
   });
 })
 
+router.get('/getAlumniInfo', (req, res) => {
+  const userid = req.userId;
+  const query = `SELECT * FROM alumni WHERE status = "active" and alumniid = ${userid}`;
+  console.log(query);
+  db.query(query, (err, results) => {
+    if (err) {
+      res.status(400).json({ message: 'Error fetching users' });
+    } else {
+      res.json(results);
+      console.log(results);
+    }
+  });
+})
 
 router.post('/addUser', (req, res) => {
   const {title, message, type} = req.body;
