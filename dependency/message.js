@@ -24,21 +24,26 @@ router.get('/getMessages/:id', (req, res) => {
 
 router.get('/getMessages', (req, res) => {
   const userId = req.userId;
-  console.log("userid in getmsg", userId);
+  console.log("userId in getMessages:", userId);
+
   const query = `
-    SELECT m.*, u.username, u.usertype
+    SELECT m.*, a.name, a.email
     FROM message m
-    INNER JOIN user u ON m.userid = u.userid
-    ORDER BY m.date desc
+    INNER JOIN alumni a ON m.userid = a.alumniid
+    ORDER BY m.date DESC
   `;
-  db.query(query, [userId], (err, results) => {
+
+  db.query(query, (err, results) => {
     if (err) {
-      res.status(400).json({ message: 'Error fetching notifications' });
+      console.error("Error fetching messages:", err);
+      res.status(400).json({ message: 'Error fetching messages' });
     } else {
       res.json(results);
     }
   });
 });
+
+
 
 router.get('/getMessageInfo/:id', (req, res) => {
   const messageId = req.params.id;
@@ -76,6 +81,27 @@ router.post('/addMessage', (req, res) => {
     res.send(result);
   });
 });
+router.post('/addUserMessage', (req, res) => {
+  const userid = req.userId;
+  const { content } = req.body;
+
+  // Get the current date and time
+  const now = new Date();
+
+  // Format the date and time as a string
+  const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
+  console.log(now);
+
+  const sql = 'INSERT INTO message (content, date, userid) VALUES (?,?,?)';
+  db.query(sql, [content, formattedDate, userid], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+});
+
 
 router.post('/hideMessage', (req, res) => {
   const userid = req.userId;

@@ -65,7 +65,7 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/signin', (req, res) => {
-  console.log("BE signin")
+  console.log("LOGGING IN");
   const { email, password } = req.body;
   console.log(email);
   console.log(password);
@@ -94,6 +94,7 @@ app.post('/signin', (req, res) => {
         const token = jwt.sign({ userId, name }, SECRET_KEY, {
           expiresIn: '24h'
         });
+        console.log(token);
         res.send({ token, name });
       } else {
         res.status(401).send({ message: 'Invalid password' });
