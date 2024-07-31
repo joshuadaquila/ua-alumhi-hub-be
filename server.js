@@ -32,9 +32,10 @@ db.connect((err) => {
 });
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Allow requests from your React app
+  origin: ['http://localhost:3000', 'https://alumni-hub.netlify.app'], // Allow requests from these origins
   credentials: true // Allow credentials (session cookie) to be sent
 };
+
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
