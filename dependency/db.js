@@ -10,8 +10,12 @@ const dbConfig = {
 };
 
 let connection;
+let reconnecting = false;
 
 function handleDisconnect() {
+  if (reconnecting) return; // Prevent multiple reconnection attempts
+  reconnecting = true;
+
   connection = mysql.createConnection(dbConfig);
 
   connection.connect(function (err) {
@@ -20,12 +24,14 @@ function handleDisconnect() {
       setTimeout(handleDisconnect, 2000); // Retry connection after 2 seconds
     } else {
       console.log('Connected to the database with thread ID:', connection.threadId);
+      reconnecting = false;
     }
   });
 
   connection.on('error', function (err) {
     console.error('Database error:', err);
     if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR') {
+      reconnecting = false;
       handleDisconnect(); // Reconnect on connection lost or fatal error
     } else {
       throw err;
