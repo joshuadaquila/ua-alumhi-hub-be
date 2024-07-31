@@ -1,6 +1,14 @@
-// firebaseAdmin.js
 const admin = require('firebase-admin');
-const serviceAccount = require('./ua-alumni-hub-firebase-adminsdk-l4tro-0afb2dbc7b.json'); // Path to your Firebase Admin SDK service account key file
+const path = require('path');
+require('dotenv').config();
+
+const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
+if (!serviceAccountPath) {
+  throw new Error('Missing the GOOGLE_APPLICATION_CREDENTIALS environment variable');
+}
+
+const serviceAccount = require(path.resolve(serviceAccountPath));
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

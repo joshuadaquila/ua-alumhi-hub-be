@@ -1,2 +1,8 @@
+# Ignore node_modules directory
 node_modules/
-./dependency/ua-alumni-hub-firebase-adminsdk-l4tro-0afb2dbc7b.json
+
+# Ignore Firebase Admin SDK service account key file
+/dependency/config/firebaseAcc.json
+
+# Ignore environment configuration file
+/dependency/.env
