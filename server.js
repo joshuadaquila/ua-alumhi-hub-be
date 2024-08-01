@@ -13,7 +13,7 @@ const users = require('./dependency/users');
 const feed = require('./dependency/feed');
 const survey = require('./dependency/survey');
 const dashboard = require('./dependency/dashboard');
-const dashboard = require('./dependency/profile');
+const profile = require('./dependency/profile');
 const io = require('./dependency/socketio');
 
 
