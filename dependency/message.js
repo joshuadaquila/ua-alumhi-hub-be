@@ -27,7 +27,7 @@ router.get('/getMessages', (req, res) => {
   console.log("userId in getMessages:", userId);
 
   const query = `
-    SELECT m.*, a.name, a.email
+    SELECT m.*, a.name, a.email, a.photourl
     FROM message m
     INNER JOIN alumni a ON m.userid = a.alumniid
     ORDER BY m.date DESC
