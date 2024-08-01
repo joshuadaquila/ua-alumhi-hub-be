@@ -23,13 +23,13 @@ const port = 3001;
 const SECRET_KEY = process.env.SECRET_KEY || 'default-secret-key';
 
 // Connect to MySQL
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL database:', err);
-    process.exit(1); // Exit process with failure
-  }
-  console.log('Connected to MySQL database!');
-});
+// db.connect((err) => {
+//   if (err) {
+//     console.error('Error connecting to MySQL database:', err);
+//     process.exit(1); // Exit process with failure
+//   }
+//   console.log('Connected to MySQL database!');
+// });
 
 const corsOptions = {
   origin: ['http://localhost:3000', 'https://alumni-hub.netlify.app'], // Allow requests from these origins

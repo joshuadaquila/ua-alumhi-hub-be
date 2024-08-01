@@ -23,11 +23,23 @@ setInterval(() => {
       connection.ping((err) => {
         if (err) {
           console.error('Error pinging MySQL server:', err);
+        } else {
+          console.log('MySQL connection is active and healthy!');
         }
         connection.release();
       });
     }
   });
 }, 600000); // 10 minutes
+
+// Log a success message when the connection is established
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error('Error getting initial connection:', err);
+  } else {
+    console.log('MySQL connection established successfully!');
+    connection.release();
+  }
+});
 
 module.exports = db;
