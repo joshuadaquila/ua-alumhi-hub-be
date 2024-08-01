@@ -1,34 +1,33 @@
 require('dotenv').config();
 const mysql = require('mysql');
 
-let db;
+// Configure MySQL connection pool
+const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  connectionLimit: 10, // Adjust this value based on your needs
+  acquireTimeout: 30000, // 30 seconds
+  timeout: 60000, // 1 minute
+  connectTimeout: 60000 // 1 minute
+});
 
-function handleDisconnect() {
-    db = mysql.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        port: process.env.DB_PORT
-    });
-
-    db.connect((err) => {
+// Periodic connection ping
+setInterval(() => {
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error getting connection:', err);
+    } else {
+      connection.ping((err) => {
         if (err) {
-            console.error('Error connecting to database:', err);
-            setTimeout(handleDisconnect, 2000); // Retry after 2 seconds if connection fails
+          console.error('Error pinging MySQL server:', err);
         }
-    });
-
-    db.on('error', (err) => {
-        console.error('Database error:', err);
-        if (err.code === 'PROTOCOL_CONNECTION_LOST' || err.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR') {
-            handleDisconnect(); // Reconnect if the connection is lost
-        } else {
-            throw err;
-        }
-    });
-}
-
-handleDisconnect();
+        connection.release();
+      });
+    }
+  });
+}, 600000); // 10 minutes
 
 module.exports = db;
