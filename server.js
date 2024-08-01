@@ -13,6 +13,7 @@ const users = require('./dependency/users');
 const feed = require('./dependency/feed');
 const survey = require('./dependency/survey');
 const dashboard = require('./dependency/dashboard');
+const dashboard = require('./dependency/profile');
 const io = require('./dependency/socketio');
 
 
@@ -157,6 +158,7 @@ app.use('', authenticateToken, users);
 app.use('', authenticateToken, feed);
 app.use('', authenticateToken, survey);
 app.use('', authenticateToken, dashboard);
+app.use('', authenticateToken, profile);
 
 // Start the server
 const server = app.listen(port, () => {
