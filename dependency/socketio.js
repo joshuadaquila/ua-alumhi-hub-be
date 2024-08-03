@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
-import db from './db';
+const db = require('./db');
 
 const app = express();
 const server = createServer(app);
