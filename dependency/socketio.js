@@ -7,7 +7,7 @@ const app = express();
 const server = createServer(app);
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Allow requests from your React app
+  origin: 'https://alumni-hub.netlify.app', // Allow requests from your React app
   credentials: true // Allow credentials (session cookie) to be sent
 };
 
@@ -18,9 +18,9 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  console.log('a user connected hehe'); //sends to client
-  const msg = "guys may nag connect";
-  socket.emit('chika', msg);
+  // console.log('a user connected hehe'); //sends to client
+  // const msg = "guys may nag connect";
+  // socket.emit('chika', msg);
 
   socket.on('eventNotification', (msg) => { //receives from client
     console.log('message: ' + msg);
