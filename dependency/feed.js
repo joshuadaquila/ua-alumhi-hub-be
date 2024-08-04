@@ -202,7 +202,26 @@ router.get('/getLikes/:feedid', (req, res) => {
 });
 
 
+router.post('/addComment', (req, res) => {
+  const userId = req.userId;
+  const { feedid, content } = req.body;
 
+  if (!userId || !feedid || !content) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  const sql = 'INSERT INTO comment (feedid, alumniid, content) VALUES (?,?,?)';
+  db.query(sql, [feedid, userId, content], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.status(201).json({
+      message: 'Comment added successfully',
+      commentId: result.insertId
+    });
+  });
+});
 
 router.get('/getComments/:feedid', (req, res) => {
   const feedid = req.params.feedid;
