@@ -76,6 +76,29 @@ router.put('/updatePost/:feedid', async (req, res) => {
   }
 });
 
+router.delete('/deletePost/:feedid', async (req, res) => {
+  const userId = req.userId; // Assuming you have middleware to get userId from token
+  const { feedid } = req.params;
+
+  try {
+    const sql = 'DELETE FROM feed WHERE feedid = ? AND alumniid = ?';
+    db.query(sql, [feedid, userId], (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).send('Internal server error');
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).send('Post not found or you are not the owner');
+      }
+      res.send('Post deleted successfully');
+    });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    res.status(500).send('Error deleting post');
+  }
+});
+
+
 router.get('/getFeed', (req, res) => {
   // console.log("get events is fetched")
   const query = `SELECT f.content, f.datestamp, f.photourl, f.feedid,
