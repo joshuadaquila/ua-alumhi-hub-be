@@ -117,26 +117,76 @@ router.get('/getFeed', (req, res) => {
   });
 });
 
-router.post('/addComment', (req, res) => {
+router.post('/likePost', (req, res) => {
   const userId = req.userId;
-  const { feedid, content } = req.body;
+  const { feedid } = req.body;
 
-  if (!userId || !feedid || !content) {
+  if (!userId || !feedid) {
     return res.status(400).send('Missing required fields');
   }
 
-  const sql = 'INSERT INTO comment (feedid, alumniid, content) VALUES (?,?,?)';
-  db.query(sql, [feedid, userId, content], (err, result) => {
-    if (err) {
-      console.error('Error executing query:', err);
+  // Check if the user has already liked the post
+  const checkSql = 'SELECT * FROM feedlike WHERE feedid = ? AND alumniid = ?';
+  db.query(checkSql, [feedid, userId], (checkErr, checkResult) => {
+    if (checkErr) {
+      console.error('Error executing query:', checkErr);
       return res.status(500).send('Internal server error');
     }
-    res.status(201).json({
-      message: 'Comment added successfully',
-      commentId: result.insertId
-    });
+
+    if (checkResult.length > 0) {
+      // User has already liked this post, toggle the status
+      const currentStatus = checkResult[0].status;
+      const newStatus = currentStatus === 'active' ? 'deleted' : 'active';
+      const updateSql = 'UPDATE feedlike SET status = ? WHERE feedid = ? AND alumniid = ?';
+      db.query(updateSql, [newStatus, feedid, userId], (updateErr, updateResult) => {
+        if (updateErr) {
+          console.error('Error executing query:', updateErr);
+          return res.status(500).send('Internal server error');
+        }
+        res.status(200).json({
+          message: newStatus === 'active' ? 'Post liked successfully' : 'Post unliked successfully',
+        });
+      });
+    } else {
+      // Insert a new like record with status 'active'
+      const insertSql = 'INSERT INTO feedlike (feedid, alumniid, status) VALUES (?,?,?)';
+      db.query(insertSql, [feedid, userId, 'active'], (insertErr, insertResult) => {
+        if (insertErr) {
+          console.error('Error executing query:', insertErr);
+          return res.status(500).send('Internal server error');
+        }
+        res.status(201).json({
+          message: 'Post liked successfully',
+          likeId: insertResult.insertId
+        });
+      });
+    }
   });
 });
+
+
+router.get('/getLikes/:feedid', (req, res) => {
+  const feedid = req.params.feedid;
+  
+  // SQL query to count the number of active likes
+  const query = `
+    SELECT COUNT(*) AS totalLikes
+    FROM feedlike
+    WHERE feedid = ? AND status = 'active'
+  `;
+  
+  db.query(query, [feedid], (err, results) => {
+    if (err) {
+      console.log("ERROR GETTING LIKES", err);
+      return res.status(400).json({ message: 'Error fetching likes' });
+    }
+    
+    // Send the count of active likes as a response
+    res.json({ totalLikes: results[0].totalLikes });
+  });
+});
+
+
 
 
 router.get('/getComments/:feedid', (req, res) => {
