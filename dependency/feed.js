@@ -117,6 +117,49 @@ router.get('/getFeed', (req, res) => {
   });
 });
 
+router.post('/addComment', (req, res) => {
+  const userId = req.userId;
+  const { feedid, content } = req.body;
+
+  if (!userId || !feedid || !content) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  const sql = 'INSERT INTO comment (feedid, alumniid, content) VALUES (?,?,?)';
+  db.query(sql, [feedid, userId, content], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.status(201).json({
+      message: 'Comment added successfully',
+      commentId: result.insertId
+    });
+  });
+});
+
+
+router.get('/getComments/:feedid', (req, res) => {
+  const feedid = req.params.feedid;
+  const query = `
+    SELECT c.commentid, c.content, c.date, a.name
+    FROM comment c
+    INNER JOIN alumni a ON c.alumniid = a.alumniid
+    WHERE c.status = "active" AND c.feedid = ?
+    ORDER BY c.commentid ASC
+  `;
+  
+  db.query(query, [feedid], (err, results) => {
+    if (err) {
+      console.log("ERROR GET COMMENTS", err);
+      res.status(400).json({ message: 'Error fetching comments' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
 router.get('/getMyFeed', (req, res) => {
   console.log("get myfeed is fetched")
   const userId = req.userId;
