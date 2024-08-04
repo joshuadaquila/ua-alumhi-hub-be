@@ -11,7 +11,8 @@ const db = mysql.createPool({
   connectionLimit: 10, // Adjust this value based on your needs
   acquireTimeout: 30000, // 30 seconds
   timeout: 60000, // 1 minute
-  connectTimeout: 60000 // 1 minute
+  connectTimeout: 60000, // 1 minute
+  charset: 'utf8mb4'
 });
 
 // Periodic connection ping
