@@ -125,44 +125,36 @@ router.post('/likePost', (req, res) => {
     return res.status(400).send('Missing required fields');
   }
 
-  // Check if the user has already liked the post
-  const checkSql = 'SELECT * FROM feedlike WHERE feedid = ? AND alumniid = ?';
-  db.query(checkSql, [feedid, userId], (checkErr, checkResult) => {
-    if (checkErr) {
-      console.error('Error executing query:', checkErr);
+  // Insert a new like record with status 'active'
+  const insertSql = 'INSERT INTO feedlike (feedid, alumniid, status) VALUES (?, ?, ?)';
+  db.query(insertSql, [feedid, userId, 'active'], (insertErr, insertResult) => {
+    if (insertErr) {
+      console.error('Error executing query:', insertErr);
       return res.status(500).send('Internal server error');
     }
-
-    if (checkResult.length > 0) {
-      // User has already liked this post, toggle the status
-      const currentStatus = checkResult[0].status;
-      const newStatus = currentStatus === 'active' ? 'deleted' : 'active';
-      const updateSql = 'UPDATE feedlike SET status = ? WHERE feedid = ? AND alumniid = ?';
-      db.query(updateSql, [newStatus, feedid, userId], (updateErr, updateResult) => {
-        if (updateErr) {
-          console.error('Error executing query:', updateErr);
-          return res.status(500).send('Internal server error');
-        }
-        res.status(200).json({
-          message: newStatus === 'active' ? 'Post liked successfully' : 'Post unliked successfully',
-        });
-      });
-    } else {
-      // Insert a new like record with status 'active'
-      const insertSql = 'INSERT INTO feedlike (feedid, alumniid, status) VALUES (?,?,?)';
-      db.query(insertSql, [feedid, userId, 'active'], (insertErr, insertResult) => {
-        if (insertErr) {
-          console.error('Error executing query:', insertErr);
-          return res.status(500).send('Internal server error');
-        }
-        res.status(201).json({
-          message: 'Post liked successfully',
-          likeId: insertResult.insertId
-        });
-      });
-    }
+    res.status(201).json({ message: 'Post liked successfully', likeId: insertResult.insertId });
   });
 });
+
+router.post('/unlikePost', (req, res) => {
+  const userId = req.userId;
+  const { feedid } = req.body;
+
+  if (!userId || !feedid) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  // Remove the like record
+  const deleteSql = 'DELETE FROM feedlike WHERE feedid = ? AND alumniid = ?';
+  db.query(deleteSql, [feedid, userId], (deleteErr, deleteResult) => {
+    if (deleteErr) {
+      console.error('Error executing query:', deleteErr);
+      return res.status(500).send('Internal server error');
+    }
+    res.status(200).json({ message: 'Post unliked successfully' });
+  });
+});
+
 
 
 router.get('/getLikes/:feedid', (req, res) => {
