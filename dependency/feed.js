@@ -136,6 +136,29 @@ router.post('/likePost', (req, res) => {
   });
 });
 
+router.get('/hasLiked/:feedid', (req, res) => {
+  const userId = req.userId;
+  const feedid = req.params.feedid;
+
+  if (!userId || !feedid) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  // Query to check if the user has liked the post
+  const checkSql = 'SELECT * FROM feedlike WHERE feedid = ? AND alumniid = ? AND status = ?';
+  db.query(checkSql, [feedid, userId, 'active'], (checkErr, checkResult) => {
+    if (checkErr) {
+      console.error('Error executing query:', checkErr);
+      return res.status(500).send('Internal server error');
+    }
+
+    // If a record is found, the user has liked the post
+    const hasLiked = checkResult.length > 0;
+    res.status(200).json({ hasLiked });
+  });
+});
+
+
 router.post('/unlikePost', (req, res) => {
   const userId = req.userId;
   const { feedid } = req.body;
