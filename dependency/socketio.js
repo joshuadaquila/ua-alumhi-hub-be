@@ -26,6 +26,10 @@ io.on('connection', (socket) => {
     io.emit('eventNotification', msg); // Send event notification to all connected clients
   });
 
+  socket.on('feedNotification', (msg) => {
+    io.emit('feedNotification', msg); // Send event notification to all connected clients
+  });
+
   socket.on('messageNotification', (msg) => {
     console.log('Received message:', msg);
 
