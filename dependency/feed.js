@@ -59,7 +59,7 @@ router.put('/updatePost/:feedid', async (req, res) => {
   }
 
   try {
-    const sql = 'UPDATE feed SET content = ? WHERE id = ? AND alumniid = ?';
+    const sql = 'UPDATE feed SET content = ? WHERE feedid = ? AND alumniid = ?';
     db.query(sql, [content, feedid, userId], (err, result) => {
       if (err) {
         console.error('Error executing query:', err);
