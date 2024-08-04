@@ -49,6 +49,33 @@ router.post('/createPost', upload.array('images', 10), async (req, res) => {
   }
 });
 
+router.put('/updatePost/:feedid', async (req, res) => {
+  const userId = req.userId; // Assuming you have middleware to get userId from token
+  const { feedid } = req.params;
+  const { content } = req.body;
+
+  if (!content) {
+    return res.status(400).send('Post content cannot be empty');
+  }
+
+  try {
+    const sql = 'UPDATE feed SET content = ? WHERE id = ? AND alumniid = ?';
+    db.query(sql, [content, feedid, userId], (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).send('Internal server error');
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).send('Post not found or you are not the owner');
+      }
+      res.send('Post updated successfully');
+    });
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).send('Error updating post');
+  }
+});
+
 router.get('/getFeed', (req, res) => {
   // console.log("get events is fetched")
   const query = `SELECT f.content, f.datestamp, f.photourl, f.feedid,
