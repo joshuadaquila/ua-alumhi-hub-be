@@ -40,7 +40,7 @@ router.post('/addNotification', (req, res) => {
 router.get('/checkNotification', (req, res) => {
   // console.log("get events is fetched")
   const query = `SELECT notificationid
-    FROM notification
+    FROM notifications
     WHERE status = "unread"`;
   db.query(query, (err, results) => {
     if (err) {
