@@ -94,9 +94,7 @@ app.post('/signin', (req, res) => {
       }
 
       if (isMatch) {
-        const token = jwt.sign({ userId, name }, SECRET_KEY, {
-          expiresIn: '24h'
-        });
+        const token = jwt.sign({ userId, name }, SECRET_KEY);
         console.log(token);
         res.send({ token, name });
       } else {
