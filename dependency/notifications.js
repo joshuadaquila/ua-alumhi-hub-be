@@ -52,7 +52,7 @@ router.get('/checkNotification', (req, res) => {
   });
 });
 
-router.post('/updateNotification', (req, res) => {
+router.patch('/updateNotification', (req, res) => {
   // const {title, message, type} = req.body;
 
   const sql = 'UPDATE notifications SET status = "read" WHERE status = "unread"';
