@@ -55,7 +55,7 @@ router.get('/checkNotification', (req, res) => {
 router.post('/updateNotification', (req, res) => {
   // const {title, message, type} = req.body;
 
-  const sql = 'UPDATE notifications SET status = "read"';
+  const sql = 'UPDATE notifications SET status = "read" WHERE status = "unread"';
   db.query(sql, (err, result) => {
     if (err) {
       console.error('Error executing query:', err);
