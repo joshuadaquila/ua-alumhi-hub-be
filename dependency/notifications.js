@@ -36,4 +36,19 @@ router.post('/addNotification', (req, res) => {
     res.send(result);
   });
 })
+
+router.get('/checkNotification', (req, res) => {
+  // console.log("get events is fetched")
+  const query = `SELECT notificationid
+    FROM notification
+    WHERE status = "unread"`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET FEED", err);
+      res.status(400).json({ message: 'Error fetching feed' });
+    } else {
+      res.json(results);
+    }
+  });
+});
 module.exports = router;
