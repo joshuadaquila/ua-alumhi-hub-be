@@ -51,4 +51,17 @@ router.get('/checkNotification', (req, res) => {
     }
   });
 });
+
+router.post('/updateNotification', (req, res) => {
+  // const {title, message, type} = req.body;
+
+  const sql = 'UPDATE notifications SET status = "read"';
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+})
 module.exports = router;
