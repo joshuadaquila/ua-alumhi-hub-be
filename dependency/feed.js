@@ -81,7 +81,7 @@ router.delete('/deletePost/:feedid', async (req, res) => {
   const { feedid } = req.params;
 
   try {
-    const sql = 'SET FOREIGN_KEY_CHECKS = 0; DELETE FROM feed WHERE feedid = ? AND alumniid = ?';
+    const sql = 'DELETE FROM feed WHERE feedid = ? AND alumniid = ?';
     db.query(sql, [feedid, userId], (err, result) => {
       if (err) {
         console.error('Error executing query:', err);
