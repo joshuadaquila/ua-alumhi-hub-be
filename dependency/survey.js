@@ -108,7 +108,7 @@ router.post('/submitContributionProfile', (req, res) => {
 
 router.get('/getSurveyGenInfo', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT g.*, a.alumniid, a.name
+  const query = `SELECT a.alumniid, a.name, g.*, 
   FROM alumni a
   INNER JOIN generalinformation g ON a.alumniid = g.alumniid
   WHERE a.alumniid = ? ORDER BY g.geninfoid DESC`;
@@ -124,7 +124,7 @@ router.get('/getSurveyGenInfo', (req, res) => {
 
 router.get('/getSurveyEducBack', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT e.*, a.alumniid, a.name
+  const query = `SELECT a.alumniid, a.name, e.*, 
   FROM alumni a
   INNER JOIN educationalbackground e ON a.alumniid = e.alumniid
   WHERE a.alumniid = ? ORDER BY e.educbackid DESC`;
@@ -140,7 +140,7 @@ router.get('/getSurveyEducBack', (req, res) => {
 
 router.get('/getSurveyTraining', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT t.*, a.alumniid, a.name
+  const query = `SELECT a.alumniid, a.name, t.*, 
   FROM alumni a
   INNER JOIN training t ON a.alumniid = t.alumniid
   WHERE a.alumniid = ? ORDER BY t.trainingid DESC`;
@@ -156,7 +156,7 @@ router.get('/getSurveyTraining', (req, res) => {
 
 router.get('/getEmployData', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT e.*, a.alumniid, a.name
+  const query = `SELECT a.alumniid, a.name, e.*, 
   FROM alumni a
   INNER JOIN employmentdata e ON a.alumniid = e.alumniid
   WHERE a.alumniid = ? ORDER BY e.employmentdataid DESC`;
@@ -172,7 +172,7 @@ router.get('/getEmployData', (req, res) => {
 
 router.get('/getContriProfile', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT c.*, a.alumniid, a.name
+  const query = `SELECT a.alumniid, a.name, c.*, 
   FROM alumni a
   INNER JOIN contributionprofile c ON a.alumniid = c.alumniid
   WHERE a.alumniid = ? ORDER BY c.contributionid DESC`;
