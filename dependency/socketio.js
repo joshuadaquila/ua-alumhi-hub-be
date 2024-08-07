@@ -8,7 +8,7 @@ const app = express();
 const server = createServer(app);
 
 const corsOptions = {
-  origin: 'https://alumni-hub.netlify.app', // Allow requests from your React app
+  origin: ['https://alumni-hub.netlify.app', 'http://localhost:3000'],  // Allow requests from your React app
   credentials: true // Allow credentials (session cookie) to be sent
 };
 
