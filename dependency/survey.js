@@ -106,4 +106,83 @@ router.post('/submitContributionProfile', (req, res) => {
   });
 });
 
+router.get('/getSurveyGenInfo', (req, res) => {
+  const userId = req.userId;
+  const query = `SELECT g.*, a.alumniid, a.name
+  FROM alumni a
+  INNER JOIN generalinformation g ON a.alumniid = g.alumniid
+  WHERE a.alumniid = ${userId} ORDER BY g.geninfoid DESC`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET GENINFO", err);
+      res.status(400).json({ message: 'Error fetching feed' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+router.get('/getSurveyEducBack', (req, res) => {
+  const userId = req.userId;
+  const query = `SELECT e.*, a.alumniid, a.name
+  FROM alumni a
+  INNER JOIN educationalbackground e ON a.alumniid = e.alumniid
+  WHERE a.alumniid = ${userId} ORDER BY e.educbackid DESC`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET EDUCBACK", err);
+      res.status(400).json({ message: 'Error fetching feed' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+router.get('/getSurveyTraining', (req, res) => {
+  const userId = req.userId;
+  const query = `SELECT t.*, a.alumniid, a.name
+  FROM alumni a
+  INNER JOIN training t ON a.alumniid = t.alumniid
+  WHERE a.alumniid = ${userId} ORDER BY t.trainingid DESC`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET EDUCBACK", err);
+      res.status(400).json({ message: 'Error fetching feed' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+router.get('/getEmployData', (req, res) => {
+  const userId = req.userId;
+  const query = `SELECT e.*, a.alumniid, a.name
+  FROM alumni a
+  INNER JOIN employmentdata e ON a.alumniid = e.alumniid
+  WHERE a.alumniid = ${userId} ORDER BY e.employmentdataid DESC`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET EDUCBACK", err);
+      res.status(400).json({ message: 'Error fetching feed' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+router.get('/getContriProfile', (req, res) => {
+  const userId = req.userId;
+  const query = `SELECT c.*, a.alumniid, a.name
+  FROM alumni a
+  INNER JOIN contributionprofile c ON a.alumniid = c.alumniid
+  WHERE a.alumniid = ${userId} ORDER BY c.contributionid DESC`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET EDUCBACK", err);
+      res.status(400).json({ message: 'Error fetching feed' });
+    } else {
+      res.json(results);
+    }
+  });
+});
 module.exports = router;

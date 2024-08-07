@@ -52,9 +52,7 @@ router.post('/signin', (req, res) =>{
       }
 
       if (isMatch) {
-        const token = jwt.sign({ userId }, SECRET_KEY, {
-          expiresIn: '1h'
-        });
+        const token = jwt.sign({ userId }, SECRET_KEY);
         res.send({ token, username, userId });
       } else {
         res.status(401).send({ message: 'Invalid password' });
