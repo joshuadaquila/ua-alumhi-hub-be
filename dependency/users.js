@@ -26,19 +26,27 @@ router.get('/getAlumni', (req, res) => {
 
 
 
-router.get('/getUserInfo', (req, res) => {
-  const userid = req.userId;
-  const query = `SELECT * FROM user WHERE status = "active" and userid = ${userid}`;
-  console.log(query);
-  db.query(query, (err, results) => {
-    if (err) {
-      res.status(400).json({ message: 'Error fetching users' });
-    } else {
-      res.json(results);
-      console.log(results);
-    }
+router.get('/getUserInfo/:id', (req, res) => {
+  const userId = req.params.id; // Extract the id parameter from the request URL
+
+  // Use a parameterized query to prevent SQL injection
+  const query = 'SELECT * FROM user WHERE status = ? AND userid = ?';
+  const values = ['active', userId];
+
+  db.query(query, values, (err, results) => {
+      if (err) {
+          console.error('Error fetching user info:', err);
+          return res.status(400).json({ message: 'Error fetching user info' });
+      }
+
+      if (results.length === 0) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json(results[0]);
   });
-})
+});
+
 
 router.get('/getAlumniInfo', (req, res) => {
   const userid = req.userId;
