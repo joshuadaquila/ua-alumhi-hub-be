@@ -271,6 +271,77 @@ router.get('/getMode', (req, res) => {
   });
 });
 
+router.get('/getCounts', (req, res) => {
+  // SQL query to get counts for various categories
+  const query = `
+    -- Count of Sex
+    SELECT 'Sex' AS category, sex AS value, COUNT(*) AS count
+    FROM generalinformation
+    WHERE sex IS NOT NULL AND TRIM(sex) <> ''  -- Exclude blank and null values
+    GROUP BY LOWER(sex)
+
+    UNION ALL
+
+    -- Count of Age Ranges
+    SELECT 'Age Range' AS category, 
+           CASE
+             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 0 AND 9 THEN '0-9'
+             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 10 AND 19 THEN '10-19'
+             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 20 AND 29 THEN '20-29'
+             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 30 AND 39 THEN '30-39'
+             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 40 AND 49 THEN '40-49'
+             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 50 AND 59 THEN '50-59'
+             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 60 AND 69 THEN '60-69'
+             ELSE '70+'
+           END AS value,
+           COUNT(*) AS count
+    FROM alumni
+    WHERE birthday IS NOT NULL
+    GROUP BY value
+    ORDER BY FIELD(value, '0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70+')
+
+    UNION ALL
+
+    -- Count of Civil Status
+    SELECT 'Civil Status' AS category, civilstatus AS value, COUNT(*) AS count
+    FROM generalinformation
+    WHERE civilstatus IS NOT NULL AND TRIM(civilstatus) <> ''  -- Exclude blank and null values
+    GROUP BY LOWER(civilstatus)
+
+    UNION ALL
+
+    -- Count of Region
+    SELECT 'Region' AS category, region AS value, COUNT(*) AS count
+    FROM generalinformation
+    WHERE region IS NOT NULL AND TRIM(region) <> ''  -- Exclude blank and null values
+    GROUP BY LOWER(region)
+
+    UNION ALL
+
+    -- Count of Province
+    SELECT 'Province' AS category, province AS value, COUNT(*) AS count
+    FROM generalinformation
+    WHERE province IS NOT NULL AND TRIM(province) <> ''  -- Exclude blank and null values
+    GROUP BY LOWER(province)
+
+    UNION ALL
+
+    -- Count of Residence
+    SELECT 'Residence' AS category, residence AS value, COUNT(*) AS count
+    FROM generalinformation
+    WHERE residence IS NOT NULL AND TRIM(residence) <> ''  -- Exclude blank and null values
+    GROUP BY LOWER(residence);
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GETTING COUNTS", err);
+      res.status(400).json({ message: 'Error fetching counts' });
+    } else {
+      res.json(results);
+    }
+  });
+});
 
 
 module.exports = router;
