@@ -28,10 +28,9 @@ router.get('/getMessages', (req, res) => {
 
   const query = `
     SELECT m.*, a.name, a.email, a.photourl
-FROM message m
-INNER JOIN alumni a ON m.userid = a.alumniid
-LEFT JOIN user u ON m.userid = u.userid
-ORDER BY m.date DESC;
+    FROM message m
+    INNER JOIN alumni a ON m.userid = a.alumniid
+    ORDER BY m.date DESC
   `;
 
   db.query(query, (err, results) => {
@@ -82,8 +81,8 @@ router.post('/addMessage', (req, res) => {
     res.send(result);
   });
 });
-router.post('/addUserMessage', (req, res) => {
-  const userid = req.userId;
+router.post('/addAdminMessage', (req, res) => {
+  const userid = 29
   const { content } = req.body;
 
   // Get the current date and time
