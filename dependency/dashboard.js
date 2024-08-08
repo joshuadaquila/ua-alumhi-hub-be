@@ -1,193 +1,104 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const db = require('./db'); // Assume db is a connection pool
+
+const handleQuery = (query, res) => {
+  db.getConnection((err, connection) => {
+    if (err) {
+      console.error("Error getting connection:", err);
+      res.status(500).json({ message: 'Error getting connection' });
+      return;
+    }
+
+    connection.query(query, (queryErr, results) => {
+      connection.release(); // Always release the connection
+
+      if (queryErr) {
+        console.error("Error executing query:", queryErr);
+        res.status(400).json({ message: 'Error executing query' });
+      } else {
+        res.json(results);
+      }
+    });
+  });
+};
 
 router.get('/getTotalAlumni', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(alumniid) AS totalAlumni FROM alumni WHERE status = 'active'
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      res.status(400).json({ message: 'Error fetching messages' });
-    } else {
-      res.json(results);
-    }
-  });
+  handleQuery(query, res);
 });
 
 router.get('/getTotalMessage', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(messageid) AS totalMessage FROM message
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      res.status(400).json({ message: 'Error fetching messages' });
-    } else {
-      res.json(results);
-    }
-  });
+  handleQuery(query, res);
 });
 
 router.get('/getTotalComment', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(commentid) AS totalComment FROM comment
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      res.status(400).json({ message: 'Error fetching messages' });
-    } else {
-      res.json(results);
-    }
-  });
+  handleQuery(query, res);
 });
 
 router.get('/getTotalPost', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(feedid) AS totalPost FROM feed WHERE status = 'active'
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      res.status(400).json({ message: 'Error fetching messages' });
-    } else {
-      res.json(results);
-    }
-  });
+  handleQuery(query, res);
 });
 
 router.get('/getTotalResponses', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(geninfoid) AS totalResponse FROM generalinformation
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      res.status(400).json({ message: 'Error fetching messages' });
-    } else {
-      res.json(results);
-    }
-  });
+  handleQuery(query, res);
 });
 
 router.get('/getTotalEvent', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(eventid) AS totalEvent FROM events WHERE status = 'active'
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      res.status(400).json({ message: 'Error fetching messages' });
-    } else {
-      res.json(results);
-    }
-  });
+  handleQuery(query, res);
 });
 
 router.get('/getTotalEventHap', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(eventid) AS totalEvent
     FROM events
     WHERE date = CURDATE() 
     AND CURTIME() BETWEEN time AND endtime 
-    AND status = 'active' 
+    AND status = 'active'
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching events:", err);
-      res.status(400).json({ message: 'Error fetching events' });
-    } else {
-      res.json(results[0]); // Return the count directly
-    }
-  });
+  handleQuery(query, res);
 });
-router.get('/getTotalEventFuture', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
 
+router.get('/getTotalEventFuture', (req, res) => {
   const query = `
     SELECT COUNT(eventid) AS totalEvent 
     FROM events WHERE
     date > CURDATE() AND status = 'active'
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching events:", err);
-      res.status(400).json({ message: 'Error fetching events' });
-    } else {
-      res.json(results[0]); // Return the count directly
-    }
-  });
+  handleQuery(query, res);
 });
 
 router.get('/getTotalEventPast', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(eventid) AS totalEvent 
     FROM events WHERE
     date <= CURDATE() AND status = 'active'
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching events:", err);
-      res.status(400).json({ message: 'Error fetching events' });
-    } else {
-      res.json(results[0]); // Return the count directly
-    }
-  });
+  handleQuery(query, res);
 });
 
-
 router.get('/getTotalUsers', (req, res) => {
-  const userId = req.userId;
-  // console.log("userId in getMessages:", userId);
-
   const query = `
     SELECT COUNT(userid) AS totalUsers FROM user WHERE status = 'active'
   `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching messages:", err);
-      res.status(400).json({ message: 'Error fetching messages' });
-    } else {
-      res.json(results);
-    }
-  });
+  handleQuery(query, res);
 });
 
-module.exports= router;
+module.exports = router;
