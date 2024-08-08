@@ -158,7 +158,7 @@ router.get('/getTotalEventPast', (req, res) => {
   const query = `
     SELECT COUNT(eventid) AS totalEvent 
     FROM events WHERE
-    date <= CURDATE() and endtime < CURTIME() AND status = 'active'
+    date <= CURDATE() AND status = 'active'
   `;
 
   db.query(query, (err, results) => {
