@@ -27,6 +27,31 @@ router.post('/signup', (req, res)=> {
   });
 })
 
+
+router.post('/deleteUser', (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).send('User ID is required');
+  }
+
+  const sql = 'UPDATE user SET status = "deleted" WHERE userid = ?';
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).send('User not found');
+    }
+
+    res.send({ message: 'User deleted successfully' });
+  });
+});
+
+module.exports = router;
+
 router.post('/signin', (req, res) =>{
   const { username, password } = req.body;
 
