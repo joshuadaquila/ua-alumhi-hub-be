@@ -23,80 +23,20 @@ const handleQuery = (query, res) => {
   });
 };
 
-router.get('/getTotalAlumni', (req, res) => {
+// Combine all the queries into a single route
+router.get('/getDashboardStats', (req, res) => {
   const query = `
-    SELECT COUNT(alumniid) AS totalAlumni FROM alumni WHERE status = 'active'
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalMessage', (req, res) => {
-  const query = `
-    SELECT COUNT(messageid) AS totalMessage FROM message
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalComment', (req, res) => {
-  const query = `
-    SELECT COUNT(commentid) AS totalComment FROM comment
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalPost', (req, res) => {
-  const query = `
-    SELECT COUNT(feedid) AS totalPost FROM feed WHERE status = 'active'
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalResponses', (req, res) => {
-  const query = `
-    SELECT COUNT(geninfoid) AS totalResponse FROM generalinformation
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalEvent', (req, res) => {
-  const query = `
-    SELECT COUNT(eventid) AS totalEvent FROM events WHERE status = 'active'
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalEventHap', (req, res) => {
-  const query = `
-    SELECT COUNT(eventid) AS totalEvent
-    FROM events
-    WHERE date = CURDATE() 
-    AND CURTIME() BETWEEN time AND endtime 
-    AND status = 'active'
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalEventFuture', (req, res) => {
-  const query = `
-    SELECT COUNT(eventid) AS totalEvent 
-    FROM events WHERE
-    date > CURDATE() AND status = 'active'
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalEventPast', (req, res) => {
-  const query = `
-    SELECT COUNT(eventid) AS totalEvent 
-    FROM events WHERE
-    date <= CURDATE() AND status = 'active'
-  `;
-  handleQuery(query, res);
-});
-
-router.get('/getTotalUsers', (req, res) => {
-  const query = `
-    SELECT COUNT(userid) AS totalUsers FROM user WHERE status = 'active'
+    SELECT 
+      (SELECT COUNT(alumniid) FROM alumni WHERE status = 'active') AS totalAlumni,
+      (SELECT COUNT(messageid) FROM message) AS totalMessage,
+      (SELECT COUNT(commentid) FROM comment) AS totalComment,
+      (SELECT COUNT(feedid) FROM feed WHERE status = 'active') AS totalPost,
+      (SELECT COUNT(geninfoid) FROM generalinformation) AS totalResponse,
+      (SELECT COUNT(eventid) FROM events WHERE status = 'active') AS totalEvent,
+      (SELECT COUNT(eventid) FROM events WHERE date = CURDATE() AND CURTIME() BETWEEN time AND endtime AND status = 'active') AS totalEventHap,
+      (SELECT COUNT(eventid) FROM events WHERE date > CURDATE() AND status = 'active') AS totalEventFuture,
+      (SELECT COUNT(eventid) FROM events WHERE date <= CURDATE() AND status = 'active') AS totalEventPast,
+      (SELECT COUNT(userid) FROM user WHERE status = 'active') AS totalUsers;
   `;
   handleQuery(query, res);
 });
