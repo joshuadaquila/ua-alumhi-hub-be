@@ -186,4 +186,91 @@ router.get('/getContriProfile', (req, res) => {
   });
 });
 
+router.get('/getMode', (req, res) => {
+  // SQL query to get the mean age and mode for various columns
+  const query = `
+    -- Mean Age
+    SELECT 'Mean Age' AS metric, 
+           FLOOR(AVG(DATEDIFF(CURDATE(), birthday) / 365.25)) AS value
+    FROM alumni
+    WHERE birthday IS NOT NULL
+
+    UNION ALL
+
+    -- Mode Sex
+    SELECT 'Mode Sex' AS metric, sex AS value
+    FROM (
+      SELECT sex
+      FROM generalinformation
+      WHERE sex IS NOT NULL AND TRIM(sex) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(sex)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_sex
+
+    UNION ALL
+
+    -- Mode Civil Status
+    SELECT 'Mode Civil Status' AS metric, civilstatus AS value
+    FROM (
+      SELECT civilstatus
+      FROM generalinformation
+      WHERE civilstatus IS NOT NULL AND TRIM(civilstatus) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(civilstatus)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_civil_status
+
+    UNION ALL
+
+    -- Mode Region
+    SELECT 'Mode Region' AS metric, region AS value
+    FROM (
+      SELECT region
+      FROM generalinformation
+      WHERE region IS NOT NULL AND TRIM(region) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(region)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_region
+
+    UNION ALL
+
+    -- Mode Province
+    SELECT 'Mode Province' AS metric, province AS value
+    FROM (
+      SELECT province
+      FROM generalinformation
+      WHERE province IS NOT NULL AND TRIM(province) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(province)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_province
+
+    UNION ALL
+
+    -- Mode Residence
+    SELECT 'Mode Residence' AS metric, residence AS value
+    FROM (
+      SELECT residence
+      FROM generalinformation
+      WHERE residence IS NOT NULL AND TRIM(residence) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(residence)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_residence;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET MODE", err);
+      res.status(400).json({ message: 'Error fetching mode values' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+
 module.exports = router;
