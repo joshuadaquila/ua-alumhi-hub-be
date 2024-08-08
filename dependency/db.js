@@ -8,7 +8,7 @@ const db = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
-  connectionLimit: 800, // Adjust this value based on your needs
+  connectionLimit: 700, // Adjust this value based on your needs
   acquireTimeout: 30000, // 30 seconds
   timeout: 60000, // 1 minute
   connectTimeout: 60000, // 1 minute
