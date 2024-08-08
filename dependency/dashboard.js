@@ -117,7 +117,9 @@ router.get('/getTotalEventHap', (req, res) => {
   const query = `
     SELECT COUNT(eventid) AS totalEvent
     FROM events
-    WHERE DATE(time) <= CURDATE() AND DATE(endtime) >= CURDATE()
+    WHERE date = CURDATE() 
+    AND CURTIME() BETWEEN time AND endtime 
+    AND status = "active" 
   `;
 
   db.query(query, (err, results) => {
@@ -136,7 +138,7 @@ router.get('/getTotalEventFuture', (req, res) => {
   const query = `
     SELECT COUNT(eventid) AS totalEvent 
     FROM events 
-    WHERE DATE(start_time) > CURDATE()
+    date > CURDATE() AND status = "active"
   `;
 
   db.query(query, (err, results) => {
@@ -156,7 +158,7 @@ router.get('/getTotalEventPast', (req, res) => {
   const query = `
     SELECT COUNT(eventid) AS totalEvent 
     FROM events 
-    WHERE DATE(time) < CURDATE()
+    date <= CURDATE() and endtime < CURTIME() AND status = "active"
   `;
 
   db.query(query, (err, results) => {
