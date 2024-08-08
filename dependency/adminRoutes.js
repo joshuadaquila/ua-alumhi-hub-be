@@ -27,6 +27,27 @@ router.post('/signup', (req, res)=> {
   });
 })
 
+router.post('/updateUser/:id', (req, res) => {
+  const { username, password } = req.body;
+  const userId = req.params.id;
+
+  bcrypt.hash(password, 10, (err, hashedPassword) => {
+    if (err) {
+      console.error('Error hashing password:', err);
+      return res.status(500).send('Internal server error');
+    }
+
+    const sql = 'UPDATE user SET username = ?, password = ? WHERE userid = ?';
+    db.query(sql, [username, hashedPassword, userId], (err, result) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        return res.status(500).send('Internal server error');
+      }
+      res.send(result);
+    });
+  });
+});
+
 
 router.post('/deleteUser', (req, res) => {
   const { userId } = req.body;
