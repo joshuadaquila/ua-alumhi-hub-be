@@ -97,7 +97,7 @@ router.get('/getTotalEvent', (req, res) => {
   // console.log("userId in getMessages:", userId);
 
   const query = `
-    SELECT COUNT(eventid) AS totalEvent FROM events
+    SELECT COUNT(eventid) AS totalEvent FROM events WHERE status = 'active'
   `;
 
   db.query(query, (err, results) => {
@@ -119,7 +119,7 @@ router.get('/getTotalEventHap', (req, res) => {
     FROM events
     WHERE date = CURDATE() 
     AND CURTIME() BETWEEN time AND endtime 
-    AND status = "active" 
+    AND status = 'active' 
   `;
 
   db.query(query, (err, results) => {
@@ -138,7 +138,7 @@ router.get('/getTotalEventFuture', (req, res) => {
   const query = `
     SELECT COUNT(eventid) AS totalEvent 
     FROM events 
-    date > CURDATE() AND status = "active"
+    date > CURDATE() AND status = 'active'
   `;
 
   db.query(query, (err, results) => {
@@ -158,7 +158,7 @@ router.get('/getTotalEventPast', (req, res) => {
   const query = `
     SELECT COUNT(eventid) AS totalEvent 
     FROM events 
-    date <= CURDATE() and endtime < CURTIME() AND status = "active"
+    date <= CURDATE() and endtime < CURTIME() AND status = 'active'
   `;
 
   db.query(query, (err, results) => {
