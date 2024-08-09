@@ -188,7 +188,7 @@ router.get('/getContriProfile', (req, res) => {
 
 router.get('/getSurveySummary', (req, res) => {
   const query = `
-    SELECT 
+    SELECT DISTINCT
       a.alumniid, 
       a.name,
       gi.*, 
