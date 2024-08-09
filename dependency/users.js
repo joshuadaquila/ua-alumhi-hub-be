@@ -28,7 +28,7 @@ router.get('/getAlumniInfo', (req, res) => {
   const query = `
   SELECT a.*, eb.*
 FROM alumni a
-INNER JOIN (
+LEFT JOIN (
   SELECT * 
   FROM educationalbackground
   WHERE (alumniid, educbackid) IN (
