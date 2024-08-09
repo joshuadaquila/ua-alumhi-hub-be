@@ -187,7 +187,7 @@ router.get('/getContriProfile', (req, res) => {
 });
 
 router.get('/getMode', (req, res) => {
-  // SQL query to get the mean age and mode for various columns
+  // SQL query to get the mean age, mode for various columns, mode for graduation year, and total number of alumni
   const query = `
     -- Mean Age
     SELECT 'Mean Age' AS metric, 
@@ -258,7 +258,26 @@ router.get('/getMode', (req, res) => {
       GROUP BY LOWER(residence)  -- Normalize case here
       ORDER BY COUNT(*) DESC
       LIMIT 1
-    ) AS mode_residence;
+    ) AS mode_residence
+
+    UNION ALL
+
+    -- Mode Graduation Year
+    SELECT 'Mode Graduation Year' AS metric, yeargraduated AS value
+    FROM (
+      SELECT graduationyear
+      FROM alumni
+      WHERE graduationyear IS NOT NULL AND TRIM(graduationyear) <> ''  -- Exclude blank and null values
+      GROUP BY graduationyear
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_graduation_year
+
+    UNION ALL
+
+    -- Total Number of Alumni
+    SELECT 'Total Number of Alumni' AS metric, COUNT(DISTINCT alumniid) AS value
+    FROM alumni;
   `;
 
   db.query(query, (err, results) => {
@@ -270,6 +289,7 @@ router.get('/getMode', (req, res) => {
     }
   });
 });
+
 
 router.get('/getCounts', (req, res) => {
   // SQL query to get counts for various categories
