@@ -188,25 +188,24 @@ router.post('/hideEvent', (req, res) => {
 
 
 router.post('/deleteEvent/:id', (req, res) => {
-  const userId = req.userId;
-  const { eventid } = req.body;
+  const { id } = req.params; // Get the event ID from the URL parameters
 
-  const now = new Date();
+  const sql = 'DELETE FROM events WHERE eventid = ?';
 
-  // Format the date and time as a string
-  const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
-  console.log(eventid);
-
-  const sql = `DELETE FROM events WHERE eventid = ?`;
-
-  db.query(sql, [eventid], (err, result) => {
+  // Execute the query with the event ID
+  db.query(sql, [id], (err, result) => {
     if (err) {
       console.error('Error executing query:', err);
       return res.status(500).send('Internal server error');
     }
-    res.send(result);
+    if (result.affectedRows === 0) {
+      // No rows were deleted, likely because the event ID doesn't exist
+      return res.status(404).send('Event not found');
+    }
+    res.send({ message: 'Event deleted successfully' });
   });
 });
+
 
 
 module.exports = router;
