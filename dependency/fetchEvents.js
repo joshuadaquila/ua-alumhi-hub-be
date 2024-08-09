@@ -197,9 +197,9 @@ router.post('/deleteEvent/:id', (req, res) => {
   const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
   console.log(eventid);
 
-  const sql = `DELETE FROM registration WHERE eventid = ? AND userid = ?`;
+  const sql = `DELETE FROM event WHERE eventid = ?`;
 
-  db.query(sql, [eventid, userId], (err, result) => {
+  db.query(sql, [eventid], (err, result) => {
     if (err) {
       console.error('Error executing query:', err);
       return res.status(500).send('Internal server error');
