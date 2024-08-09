@@ -186,6 +186,40 @@ router.get('/getContriProfile', (req, res) => {
   });
 });
 
+router.get('/getSurveySummary', (req, res) => {
+  const query = `
+    SELECT 
+      a.alumniid, 
+      a.name,
+      gi.*, 
+      eb.*, 
+      tr.*, 
+      ed.*, 
+      cp.*
+    FROM 
+      alumni a
+    LEFT JOIN 
+      generalinformation gi ON a.alumniid = gi.alumniid
+    LEFT JOIN 
+      educationalbackground eb ON a.alumniid = eb.alumniid
+    LEFT JOIN 
+      training tr ON a.alumniid = tr.alumniid
+    LEFT JOIN 
+      employmentdata ed ON a.alumniid = ed.alumniid
+    LEFT JOIN 
+      contributionprofile cp ON a.alumniid = cp.alumniid
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET SURVEY SUMMARY", err);
+      res.status(400).json({ message: 'Error fetching survey summary' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
 router.get('/getMode', (req, res) => {
   // SQL query to get the mean age, mode for various columns, mode for graduation year, and total number of alumni
   const query = `
