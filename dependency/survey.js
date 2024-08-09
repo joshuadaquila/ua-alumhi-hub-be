@@ -263,7 +263,7 @@ router.get('/getMode', (req, res) => {
     UNION ALL
 
     -- Mode Graduation Year
-    SELECT 'Mode Graduation Year' AS metric, yeargraduated AS value
+    SELECT 'Mode Graduation Year' AS metric, graduationyear AS value
     FROM (
       SELECT graduationyear
       FROM alumni
