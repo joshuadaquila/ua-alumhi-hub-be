@@ -187,4 +187,26 @@ router.post('/hideEvent', (req, res) => {
 });
 
 
+router.post('/deleteEvent/:id', (req, res) => {
+  const userId = req.userId;
+  const { eventid } = req.body;
+
+  const now = new Date();
+
+  // Format the date and time as a string
+  const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
+  console.log(eventid);
+
+  const sql = `DELETE FROM registration WHERE eventid = ? AND userid = ?`;
+
+  db.query(sql, [eventid, userId], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+});
+
+
 module.exports = router;
