@@ -188,26 +188,40 @@ router.get('/getContriProfile', (req, res) => {
 
 router.get('/getSurveySummary', (req, res) => {
   const query = `
-    SELECT DISTINCT
-      a.alumniid, 
-      a.name,
-      gi.*, 
-      eb.*, 
-      tr.*, 
-      ed.*, 
-      cp.*
-    FROM 
-      alumni a
-    LEFT JOIN 
-      generalinformation gi ON a.alumniid = gi.alumniid
-    LEFT JOIN 
-      educationalbackground eb ON a.alumniid = eb.alumniid
-    LEFT JOIN 
-      training tr ON a.alumniid = tr.alumniid
-    LEFT JOIN 
-      employmentdata ed ON a.alumniid = ed.alumniid
-    LEFT JOIN 
-      contributionprofile cp ON a.alumniid = cp.alumniid
+    SELECT 
+    a.alumniid, 
+    a.name,
+    MAX(gi.column1) AS gi_column1,
+    MAX(gi.column2) AS gi_column2,
+    -- Repeat for all columns in generalinformation
+    MAX(eb.column1) AS eb_column1,
+    MAX(eb.column2) AS eb_column2,
+    -- Repeat for all columns in educationalbackground
+    MAX(tr.column1) AS tr_column1,
+    MAX(tr.column2) AS tr_column2,
+    -- Repeat for all columns in training
+    MAX(ed.column1) AS ed_column1,
+    MAX(ed.column2) AS ed_column2,
+    -- Repeat for all columns in employmentdata
+    MAX(cp.column1) AS cp_column1,
+    MAX(cp.column2) AS cp_column2
+    -- Repeat for all columns in contributionprofile
+FROM 
+    alumni a
+LEFT JOIN 
+    generalinformation gi ON a.alumniid = gi.alumniid
+LEFT JOIN 
+    educationalbackground eb ON a.alumniid = eb.alumniid
+LEFT JOIN 
+    training tr ON a.alumniid = tr.alumniid
+LEFT JOIN 
+    employmentdata ed ON a.alumniid = ed.alumniid
+LEFT JOIN 
+    contributionprofile cp ON a.alumniid = cp.alumniid
+GROUP BY 
+    a.alumniid, 
+    a.name;
+
   `;
   db.query(query, (err, results) => {
     if (err) {
