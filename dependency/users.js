@@ -26,20 +26,12 @@ router.get('/getAlumni', (req, res) => {
 
 router.get('/getAlumniInfo', (req, res) => {
   const query = `
-  SELECT a.*, eb.*
-FROM alumni a
-LEFT JOIN (
-  SELECT * 
-  FROM educationalbackground
-  WHERE (alumniid, educbackid) IN (
-    SELECT alumniid, MAX(educbackid)
-    FROM educationalbackground
-    GROUP BY alumniid
-  )
-) eb ON a.alumniid = eb.alumniid
-WHERE a.status = "active"
-ORDER BY eb.educbackid DESC;
-`;
+  SELECT DISTINCT a.*, eb.*
+  FROM alumni a 
+  INNER JOIN educationalbackground eb
+  ON a.alumniid = eb.alumniid 
+  WHERE a.status = "active"
+  ORDER BY eb.educbackid DESC`;
   db.query(query, (err, results) => {
     if (err) {
       res.status(400).json({ message: 'Error fetching alumni' });
