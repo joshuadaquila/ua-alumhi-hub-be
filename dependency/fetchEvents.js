@@ -225,7 +225,7 @@ router.post('/updateEvent', (req, res) => {
 router.get('/eventReport/:id', (req, res) => {
   const eventid = req.params.id;
   const query = `
-    SELECT r.registrationid, a.name, a.email, e.*
+    SELECT r.registrationid, r.date as registrationdate, a.name, a.email, e.*
     FROM registration r
     INNER JOIN alumni a
     ON r.alumniid = a.alumniid
