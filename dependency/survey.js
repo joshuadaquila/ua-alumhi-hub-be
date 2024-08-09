@@ -188,26 +188,65 @@ router.get('/getContriProfile', (req, res) => {
 
 router.get('/getSurveySummary', (req, res) => {
   const query = `
-    SELECT DISTINCT
-      a.alumniid, 
-      a.name,
-      gi.*, 
-      eb.*, 
-      tr.*, 
-      ed.*, 
-      cp.*
-    FROM 
-      alumni a
-    LEFT JOIN 
-      generalinformation gi ON a.alumniid = gi.alumniid
-    LEFT JOIN 
-      educationalbackground eb ON a.alumniid = eb.alumniid
-    LEFT JOIN 
-      training tr ON a.alumniid = tr.alumniid
-    LEFT JOIN 
-      employmentdata ed ON a.alumniid = ed.alumniid
-    LEFT JOIN 
-      contributionprofile cp ON a.alumniid = cp.alumniid
+  SELECT DISTINCT
+  a.alumniid,
+  a.name,
+  MAX(gi.telnumber) AS gi_telnumber,
+  MAX(gi.mobilenum) AS gi_mobilenum,
+  MAX(gi.civilstatus) AS gi_civilstatus,
+  MAX(gi.sex) AS gi_sex,
+  MAX(gi.region) AS gi_region,
+  MAX(gi.province) AS gi_province,
+  MAX(gi.residence) AS gi_residence,
+  MAX(gi.status) AS gi_status,
+  MAX(eb.educattain) AS eb_educattain,
+  MAX(eb.exampassed) AS eb_exampassed,
+  MAX(eb.reasonundergrad) AS eb_reasonundergrad,
+  MAX(eb.reasongrad) AS eb_reasongrad,
+  MAX(eb.status) AS eb_status,
+  GROUP_CONCAT(DISTINCT tr.trainingtitle) AS tr_trainingtitle,
+  GROUP_CONCAT(DISTINCT tr.reason) AS tr_reason,
+  MAX(ed.presentlyemployed) AS ed_presentlyemployed,
+  MAX(ed.reasonnotemployed) AS ed_reasonnotemployed,
+  MAX(ed.presentemploystatus) AS ed_presentemploystatus,
+  MAX(ed.skillsaquiredincollege) AS ed_skillsaquiredincollege,
+  MAX(ed.presentoccupation) AS ed_presentoccupation,
+  MAX(ed.lineofbusiness) AS ed_lineofbusiness,
+  MAX(ed.placeofwork) AS ed_placeofwork,
+  MAX(ed.firstjob) AS ed_firstjob,
+  MAX(ed.reasonstayingonjob) AS ed_reasonstayingonjob,
+  MAX(ed.firstjobrelatedtocourse) AS ed_firstjobrelatedtocourse,
+  MAX(ed.reasonacceptingthejob) AS ed_reasonacceptingthejob,
+  MAX(ed.reasonchangingjob) AS ed_reasonchangingjob,
+  MAX(ed.firstjobduration) AS ed_firstjobduration,
+  MAX(ed.howfoundfirstjob) AS ed_howfoundfirstjob,
+  MAX(ed.howlongfoundfirstjob) AS ed_howlongfoundfirstjob,
+  MAX(ed.joblvlposfirstjob) AS ed_joblvlposfirstjob,
+  MAX(ed.joblvlposcurrentjob) AS ed_joblvlposcurrentjob,
+  MAX(ed.firstjobearning) AS ed_firstjobearning,
+  MAX(ed.curriculumrelevance) AS ed_curriculumrelevance,
+  MAX(ed.competencies) AS ed_competencies,
+  MAX(ed.suggestions) AS ed_suggestions,
+  MAX(ed.status) AS ed_status,
+  GROUP_CONCAT(DISTINCT cp.awardname) AS cp_awardname,
+  GROUP_CONCAT(DISTINCT cp.awardbody) AS cp_awardbody,
+  GROUP_CONCAT(DISTINCT cp.date) AS cp_date,
+  GROUP_CONCAT(DISTINCT cp.certificate) AS cp_certificate
+FROM 
+  alumni a
+LEFT JOIN 
+  generalinformation gi ON a.alumniid = gi.alumniid
+LEFT JOIN 
+  educationalbackground eb ON a.alumniid = eb.alumniid
+LEFT JOIN 
+  training tr ON a.alumniid = tr.alumniid
+LEFT JOIN 
+  employmentdata ed ON a.alumniid = ed.alumniid
+LEFT JOIN 
+  contributionprofile cp ON a.alumniid = cp.alumniid
+GROUP BY
+  a.alumniid, a.name;
+
   `;
   db.query(query, (err, results) => {
     if (err) {
