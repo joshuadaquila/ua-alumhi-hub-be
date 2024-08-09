@@ -222,6 +222,26 @@ router.post('/updateEvent', (req, res) => {
   });
 });
 
-
+router.get('/eventReport/:id', (req, res) => {
+  const eventid = req.params;
+  const query = `
+    SELECT r.registrationid, a.name, a.email, e.*
+    FROM registration r
+    INNER JOIN alumni a
+    ON r.alumniid = a.alumniid
+    INNER JOIN events e
+    ON r.eventid = e.eventid
+    WHERE r.eventid = ${eventid}
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("CHECK STATUS FAILED", err);
+      res.status(400).json({ message: 'Error checking events' });
+    } else {
+      console.log("CHECK STATUS OK");
+      res.json(results);
+    }
+  });
+});
 
 module.exports = router;
