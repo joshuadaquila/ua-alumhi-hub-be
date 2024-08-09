@@ -290,6 +290,82 @@ router.get('/getMode', (req, res) => {
   });
 });
 
+router.get('/getModeEmployment', (req, res) => {
+  // SQL query to get the mode values for various columns in the employmentdata table
+  const query = `
+    -- Mode Presently Employed
+    SELECT 'Mode Presently Employed' AS metric, presentlyemployed AS value
+    FROM (
+      SELECT presentlyemployed
+      FROM employmentdata
+      WHERE presentlyemployed IS NOT NULL AND TRIM(presentlyemployed) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(presentlyemployed)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_presentlyemployed
+
+    UNION ALL
+
+    -- Mode Employment Status
+    SELECT 'Mode Employment Status' AS metric, presentemploystatus AS value
+    FROM (
+      SELECT presentemploystatus
+      FROM employmentdata
+      WHERE presentemploystatus IS NOT NULL AND TRIM(presentemploystatus) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(presentemploystatus)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_presentemploystatus
+
+    UNION ALL
+
+    -- Mode Occupation
+    SELECT 'Mode Occupation' AS metric, presentoccupation AS value
+    FROM (
+      SELECT presentoccupation
+      FROM employmentdata
+      WHERE presentoccupation IS NOT NULL AND TRIM(presentoccupation) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(presentoccupation)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_presentoccupation
+
+    UNION ALL
+
+    -- Mode Line of Business
+    SELECT 'Mode Line of Business' AS metric, lineofbusiness AS value
+    FROM (
+      SELECT lineofbusiness
+      FROM employmentdata
+      WHERE lineofbusiness IS NOT NULL AND TRIM(lineofbusiness) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(lineofbusiness)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_lineofbusiness
+
+    UNION ALL
+
+    -- Mode Place of Work
+    SELECT 'Mode Place of Work' AS metric, placeofwork AS value
+    FROM (
+      SELECT placeofwork
+      FROM employmentdata
+      WHERE placeofwork IS NOT NULL AND TRIM(placeofwork) <> ''  -- Exclude blank and null values
+      GROUP BY LOWER(placeofwork)  -- Normalize case here
+      ORDER BY COUNT(*) DESC
+      LIMIT 1
+    ) AS mode_placeofwork;
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET MODE EMPLOYMENT", err);
+      res.status(400).json({ message: 'Error fetching mode employment values' });
+    } else {
+      res.json(results);
+    }
+  });
+});
 
 router.get('/getCounts', (req, res) => {
   // SQL query to get counts for various categories
@@ -380,6 +456,79 @@ GROUP BY residence;
     if (err) {
       console.log("ERROR GETTING COUNTS", err);
       res.status(400).json({ message: 'Error fetching counts' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+router.get('/getEmploymentCounts', (req, res) => {
+  // SQL query to get counts for various employment categories
+  const query = `
+    -- Count of Presently Employed
+    SELECT 'Presently Employed' AS category, presentlyemployed AS value, COUNT(*) AS count
+    FROM (
+        SELECT LOWER(presentlyemployed) AS presentlyemployed
+        FROM employmentdata
+        WHERE presentlyemployed IS NOT NULL AND TRIM(presentlyemployed) <> ''  -- Exclude blank and null values
+        GROUP BY LOWER(presentlyemployed)
+    ) AS presentlyemployed_counts
+    GROUP BY presentlyemployed
+
+    UNION ALL
+
+    -- Count of Employment Status
+    SELECT 'Employment Status' AS category, presentemploystatus AS value, COUNT(*) AS count
+    FROM (
+        SELECT LOWER(presentemploystatus) AS presentemploystatus
+        FROM employmentdata
+        WHERE presentemploystatus IS NOT NULL AND TRIM(presentemploystatus) <> ''  -- Exclude blank and null values
+        GROUP BY LOWER(presentemploystatus)
+    ) AS presentemploystatus_counts
+    GROUP BY presentemploystatus
+
+    UNION ALL
+
+    -- Count of Occupation
+    SELECT 'Occupation' AS category, presentoccupation AS value, COUNT(*) AS count
+    FROM (
+        SELECT LOWER(presentoccupation) AS presentoccupation
+        FROM employmentdata
+        WHERE presentoccupation IS NOT NULL AND TRIM(presentoccupation) <> ''  -- Exclude blank and null values
+        GROUP BY LOWER(presentoccupation)
+    ) AS presentoccupation_counts
+    GROUP BY presentoccupation
+
+    UNION ALL
+
+    -- Count of Line of Business
+    SELECT 'Line of Business' AS category, lineofbusiness AS value, COUNT(*) AS count
+    FROM (
+        SELECT LOWER(lineofbusiness) AS lineofbusiness
+        FROM employmentdata
+        WHERE lineofbusiness IS NOT NULL AND TRIM(lineofbusiness) <> ''  -- Exclude blank and null values
+        GROUP BY LOWER(lineofbusiness)
+    ) AS lineofbusiness_counts
+    GROUP BY lineofbusiness
+
+    UNION ALL
+
+    -- Count of Place of Work
+    SELECT 'Place of Work' AS category, placeofwork AS value, COUNT(*) AS count
+    FROM (
+        SELECT LOWER(placeofwork) AS placeofwork
+        FROM employmentdata
+        WHERE placeofwork IS NOT NULL AND TRIM(placeofwork) <> ''  -- Exclude blank and null values
+        GROUP BY LOWER(placeofwork)
+    ) AS placeofwork_counts
+    GROUP BY placeofwork;
+
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GETTING EMPLOYMENT COUNTS", err);
+      res.status(400).json({ message: 'Error fetching employment counts' });
     } else {
       res.json(results);
     }
