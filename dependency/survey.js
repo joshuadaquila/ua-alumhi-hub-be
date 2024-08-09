@@ -450,6 +450,12 @@ GROUP BY residence;
 -- Apply ordering to the final result set if needed
 -- ORDER BY category, count DESC;
 
+-- Count of Graduation Year
+    SELECT 'Graduation Year' AS category, graduationyear AS value, COUNT(*) AS count
+    FROM alumni
+    WHERE graduationyear IS NOT NULL AND TRIM(graduationyear) <> '' 
+    GROUP BY graduationyear;
+
   `;
 
   db.query(query, (err, results) => {
