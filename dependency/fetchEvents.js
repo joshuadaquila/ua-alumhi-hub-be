@@ -206,6 +206,22 @@ router.post('/deleteEvent/:id', (req, res) => {
   });
 });
 
+router.post('/updateEvent', (req, res) => {
+  const { eventid, title, description, date, time, location, capacity, registrationdeadline } = req.body;
+
+  const sql = `UPDATE events 
+               SET title = ?, description = ?, date = ?, time = ?, location = ?, capacity = ?, registrationdeadline = ? 
+               WHERE eventid = ?`;
+
+  db.query(sql, [title, description, date, time, location, capacity, registrationdeadline, eventid], (err, result) => {
+    if (err) {
+      console.error('Error updating event:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+});
+
 
 
 module.exports = router;
