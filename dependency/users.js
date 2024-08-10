@@ -24,24 +24,6 @@ router.get('/getAlumni', (req, res) => {
   });
 })
 
-router.get('/getAlumniInfo', (req, res) => {
-  const query = `
-  SELECT DISTINCT a.*, eb.*
-  FROM alumni a 
-  INNER JOIN educationalbackground eb
-  ON a.alumniid = eb.alumniid 
-  WHERE a.status = "active"
-  ORDER BY eb.educbackid DESC`;
-  db.query(query, (err, results) => {
-    if (err) {
-      res.status(400).json({ message: 'Error fetching alumni' });
-    } else {
-      res.json(results);
-    }
-  });
-})
-
-
 router.get('/getUserInfo/:id', (req, res) => {
   const userId = req.params.id; // Extract the id parameter from the request URL
 
