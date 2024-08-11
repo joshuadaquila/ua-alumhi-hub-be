@@ -6,17 +6,42 @@ router.post('/submitGeneralInfo', (req, res) => {
   const userId = req.userId;
   const { contactNum, mobileNum, civilStat, sex, region, province, residence } = req.body;
 
-  const generalInfoSql = `INSERT INTO generalinformation 
-  (alumniid, telnumber, mobilenum, civilstatus, sex, region, province, residence) VALUES (?,?,?,?,?,?,?,?)`;
-  
-  db.query(generalInfoSql, [userId, contactNum, mobileNum, civilStat, sex, region, province, residence], (err, result) => {
+  const checkIfExistsSql = `SELECT * FROM generalinformation WHERE alumniid = ?`;
+  const updateSql = `UPDATE generalinformation SET telnumber = ?, mobilenum = ?, civilstatus = ?, sex = ?, region = ?, province = ?, residence = ? WHERE alumniid = ?`;
+  const insertSql = `INSERT INTO generalinformation (alumniid, telnumber, mobilenum, civilstatus, sex, region, province, residence) VALUES (?,?,?,?,?,?,?,?)`;
+
+  db.query(checkIfExistsSql, [userId], (err, result) => {
     if (err) {
       console.error('GENINFO: ' + err.message);
-      return res.status(500).send(err.message);
+      return res.status(500).send('Database query error');
     }
-    res.json({ message: 'General information inserted successfully', result });
+
+    if (result.length > 0) {
+      // Record exists, send response first
+      res.json({ message: 'Record already exists for this user', recordExists: true, result });
+
+      // Then update the record (optional)
+      db.query(updateSql, [contactNum, mobileNum, civilStat, sex, region, province, residence, userId], (err, updateResult) => {
+        if (err) {
+          console.error('GENINFO UPDATE: ' + err.message);
+          return; // Log the error but do not send another response
+        }
+        console.log('General information updated successfully', updateResult);
+      });
+
+    } else {
+      // No existing record, insert new one
+      db.query(insertSql, [userId, contactNum, mobileNum, civilStat, sex, region, province, residence], (err, insertResult) => {
+        if (err) {
+          console.error('GENINFO INSERT: ' + err.message);
+          return res.status(500).send('Error inserting general information');
+        }
+        res.json({ message: 'General information inserted successfully', recordExists: false, insertResult });
+      });
+    }
   });
 });
+
 
 router.post('/submitEducationalBackground', (req, res) => {
   const userId = req.userId;
