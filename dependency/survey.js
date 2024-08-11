@@ -133,6 +133,9 @@ router.post('/submitContributionProfile', (req, res) => {
 
 router.get('/getSurveyGenInfo', (req, res) => {
   const userId = req.query.userId;
+  if (!userId){
+    userId = req.userId;
+  }
   const query = `SELECT a.alumniid, a.name, g.*
   FROM alumni a
   INNER JOIN generalinformation g ON a.alumniid = g.alumniid
