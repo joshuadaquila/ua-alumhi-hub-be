@@ -132,7 +132,7 @@ router.post('/submitContributionProfile', (req, res) => {
 });
 
 router.get('/getSurveyGenInfo', (req, res) => {
-  const userId = req.query.userId;
+  let userId = req.query.userId;
   if (!userId){
     userId = req.userId;
   }
