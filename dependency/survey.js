@@ -228,7 +228,7 @@ router.get('/getSurveyGenInfo', (req, res) => {
   if (!userId){
     userId = req.userId;
   }
-  const query = `SELECT a.alumniid, a.name, g.geninfoid, g.telnumber, g.mobilenum, g.civilstatus, g.sex, g.region, g.province, g.residence
+  const query = `SELECT a.alumniid, a.name, g.telnumber, g.mobilenum, g.civilstatus, g.sex, g.region, g.province, g.residence
   FROM alumni a
   INNER JOIN generalinformation g ON a.alumniid = g.alumniid
   WHERE a.alumniid = ? ORDER BY g.geninfoid DESC`;
@@ -244,7 +244,7 @@ router.get('/getSurveyGenInfo', (req, res) => {
 
 router.get('/getSurveyEducBack', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT e.educbackid, e.educattain, e.exampassed, e.reasonundergrad, e.reasongrad
+  const query = `SELECT e.educattain, e.exampassed, e.reasonundergrad, e.reasongrad
   FROM alumni a
   INNER JOIN educationalbackground e ON a.alumniid = e.alumniid
   WHERE a.alumniid = ? ORDER BY e.educbackid DESC`;
@@ -260,7 +260,7 @@ router.get('/getSurveyEducBack', (req, res) => {
 
 router.get('/getSurveyTraining', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT t.trainingid, t.trainingtitle, t.reason
+  const query = `SELECT t.trainingtitle, t.reason
   FROM alumni a
   INNER JOIN training t ON a.alumniid = t.alumniid
   WHERE a.alumniid = ? ORDER BY t.trainingid DESC`;
