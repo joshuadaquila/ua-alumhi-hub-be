@@ -228,7 +228,7 @@ router.get('/getSurveyGenInfo', (req, res) => {
   if (!userId){
     userId = req.userId;
   }
-  const query = `SELECT a.alumniid, a.name, g.geninfoid, g.telnumber, g.mobilenumber, g.civilstatus, g.sex, g.region, g.province, g.residence
+  const query = `SELECT a.alumniid, a.name, g.geninfoid, g.telnumber, g.mobilenum, g.civilstatus, g.sex, g.region, g.province, g.residence
   FROM alumni a
   INNER JOIN generalinformation g ON a.alumniid = g.alumniid
   WHERE a.alumniid = ? ORDER BY g.geninfoid DESC`;
