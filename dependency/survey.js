@@ -52,17 +52,39 @@ router.post('/submitEducationalBackground', (req, res) => {
   const undergradReasJson = JSON.stringify(undergraduateReasons);
   const gradReasJson = JSON.stringify(graduateReasons);
 
-  const educationalBackgroundSql = `INSERT INTO educationalbackground 
-  (alumniid, educattain, exampassed, reasonundergrad, reasongrad) VALUES (?,?,?,?,?)`;
-  
-  db.query(educationalBackgroundSql, [userId, educAttainJson, profExamJson, undergradReasJson, gradReasJson], (err, result) => {
+  const checkIfExistsSql = `SELECT * FROM educationalbackground WHERE alumniid = ?`;
+  const updateSql = `UPDATE educationalbackground SET educattain = ?, exampassed = ?, reasonundergrad = ?, reasongrad = ? WHERE alumniid = ?`;
+  const insertSql = `INSERT INTO educationalbackground (alumniid, educattain, exampassed, reasonundergrad, reasongrad) VALUES (?,?,?,?,?)`;
+
+  db.query(checkIfExistsSql, [userId], (err, result) => {
     if (err) {
-      console.error('EDUC: ' + err.message);
-      return res.status(500).send(err.message);
+      console.error('EDUC CHECK: ' + err.message);
+      return res.status(500).send('Database query error');
     }
-    res.json({ message: 'Educational background inserted successfully', result });
+
+    if (result.length > 0) {
+      res.json({ message: 'Record already exists for this user', recordExists: true, result });
+
+      db.query(updateSql, [educAttainJson, profExamJson, undergradReasJson, gradReasJson, userId], (err, updateResult) => {
+        if (err) {
+          console.error('EDUC UPDATE: ' + err.message);
+          return;
+        }
+        console.log('Educational background updated successfully', updateResult);
+      });
+
+    } else {
+      db.query(insertSql, [userId, educAttainJson, profExamJson, undergradReasJson, gradReasJson], (err, insertResult) => {
+        if (err) {
+          console.error('EDUC INSERT: ' + err.message);
+          return res.status(500).send('Error inserting educational background');
+        }
+        res.json({ message: 'Educational background inserted successfully', recordExists: false, insertResult });
+      });
+    }
   });
 });
+
 
 router.post('/submitTraining', (req, res) => {
   const userId = req.userId;
@@ -71,15 +93,36 @@ router.post('/submitTraining', (req, res) => {
   const trainingJson = JSON.stringify(trainings);
   const reasAdvanStudJson = JSON.stringify(reasonAdvanceStud);
 
-  const trainingSql = `INSERT INTO training 
-  (alumniid, trainingtitle, reason) VALUES (?,?,?)`;
-  
-  db.query(trainingSql, [userId, trainingJson, reasAdvanStudJson], (err, result) => {
+  const checkIfExistsSql = `SELECT * FROM training WHERE alumniid = ?`;
+  const updateSql = `UPDATE training SET trainingtitle = ?, reason = ? WHERE alumniid = ?`;
+  const insertSql = `INSERT INTO training (alumniid, trainingtitle, reason) VALUES (?,?,?)`;
+
+  db.query(checkIfExistsSql, [userId], (err, result) => {
     if (err) {
-      console.error('TRAINING: ' + err.message);
-      return res.status(500).send(err.message);
+      console.error('TRAINING CHECK: ' + err.message);
+      return res.status(500).send('Database query error');
     }
-    res.json({ message: 'Training data inserted successfully', result });
+
+    if (result.length > 0) {
+      res.json({ message: 'Record already exists for this user', recordExists: true, result });
+
+      db.query(updateSql, [trainingJson, reasAdvanStudJson, userId], (err, updateResult) => {
+        if (err) {
+          console.error('TRAINING UPDATE: ' + err.message);
+          return;
+        }
+        console.log('Training data updated successfully', updateResult);
+      });
+
+    } else {
+      db.query(insertSql, [userId, trainingJson, reasAdvanStudJson], (err, insertResult) => {
+        if (err) {
+          console.error('TRAINING INSERT: ' + err.message);
+          return res.status(500).send('Error inserting training data');
+        }
+        res.json({ message: 'Training data inserted successfully', recordExists: false, insertResult });
+      });
+    }
   });
 });
 
@@ -96,22 +139,50 @@ router.post('/submitEmploymentData', (req, res) => {
   const howFindFJobJson = JSON.stringify(howFindFirstJob);
   const compJson = JSON.stringify(competencies);
 
-  const employmentDataSql = `INSERT INTO employmentdata 
+  const checkIfExistsSql = `SELECT * FROM employmentdata WHERE alumniid = ?`;
+  const updateSql = `UPDATE employmentdata SET presentlyemployed = ?, reasonnotemployed = ?, presentemploystatus = ?, skillsaquiredincollege = ?,
+    presentoccupation = ?, lineofbusiness = ?, placeofwork = ?, firstjob = ?, reasonstayingonjob = ?, firstjobrelatedtocourse = ?,
+    reasonacceptingthejob = ?, reasonchangingjob = ?, firstjobduration = ?, howfoundfirstjob = ?, howlongfoundfirstjob = ?, joblvlposfirstjob = ?, 
+    joblvlposcurrentjob = ?, firstjobearning = ?, curriculumrelevance = ?, competencies = ?, suggestions = ? WHERE alumniid = ?`;
+  const insertSql = `INSERT INTO employmentdata 
   (alumniid, presentlyemployed, reasonnotemployed, presentemploystatus, skillsaquiredincollege,
     presentoccupation, lineofbusiness, placeofwork, firstjob, reasonstayingonjob, firstjobrelatedtocourse,
     reasonacceptingthejob, reasonchangingjob, firstjobduration, howfoundfirstjob, howlongfoundfirstjob, joblvlposfirstjob, 
     joblvlposcurrentjob, firstjobearning, curriculumrelevance, competencies, suggestions) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-  
-  db.query(employmentDataSql, [userId, presentlyEmployed, reasUnemJson, presentEmployStat, skillsAcquired, presentOccupation, majorLine, placeOfWork,
-    firstJobAfterJob, reasStayJson, firstJobRelatedToCourse, reasAccJson, reasChanJson, durationFirstJob, howFindFJobJson, durationJobSeeking, 
-    firstJobLvl, secondJobLvl, earning, curriculumRelevance, compJson, suggestion], (err, result) => {
+
+  db.query(checkIfExistsSql, [userId], (err, result) => {
     if (err) {
-      console.error('EMPLOY: ' + err.message);
-      return res.status(500).send(err.message);
+      console.error('EMPLOY CHECK: ' + err.message);
+      return res.status(500).send('Database query error');
     }
-    res.json({ message: 'Employment data inserted successfully', result });
+
+    if (result.length > 0) {
+      res.json({ message: 'Record already exists for this user', recordExists: true, result });
+
+      db.query(updateSql, [presentlyEmployed, reasUnemJson, presentEmployStat, skillsAcquired, presentOccupation, majorLine, placeOfWork,
+        firstJobAfterJob, reasStayJson, firstJobRelatedToCourse, reasAccJson, reasChanJson, durationFirstJob, howFindFJobJson, durationJobSeeking, 
+        firstJobLvl, secondJobLvl, earning, curriculumRelevance, compJson, suggestion, userId], (err, updateResult) => {
+        if (err) {
+          console.error('EMPLOY UPDATE: ' + err.message);
+          return;
+        }
+        console.log('Employment data updated successfully', updateResult);
+      });
+
+    } else {
+      db.query(insertSql, [userId, presentlyEmployed, reasUnemJson, presentEmployStat, skillsAcquired, presentOccupation, majorLine, placeOfWork,
+        firstJobAfterJob, reasStayJson, firstJobRelatedToCourse, reasAccJson, reasChanJson, durationFirstJob, howFindFJobJson, durationJobSeeking, 
+        firstJobLvl, secondJobLvl, earning, curriculumRelevance, compJson, suggestion], (err, insertResult) => {
+        if (err) {
+          console.error('EMPLOY INSERT: ' + err.message);
+          return res.status(500).send('Error inserting employment data');
+        }
+        res.json({ message: 'Employment data inserted successfully', recordExists: false, insertResult });
+      });
+    }
   });
 });
+
 
 router.post('/submitContributionProfile', (req, res) => {
   const userId = req.userId;
@@ -119,15 +190,36 @@ router.post('/submitContributionProfile', (req, res) => {
 
   const selectFilesJson = JSON.stringify(selectedFiles);
 
-  const contributionProfileSql = `INSERT INTO contributionprofile 
-  (alumniid, awardname, awardbody, date, certificate) VALUES (?,?,?,?,?)`;
-  
-  db.query(contributionProfileSql, [userId, awardName, awardBody, date, selectFilesJson], (err, result) => {
+  const checkIfExistsSql = `SELECT * FROM contributionprofile WHERE alumniid = ?`;
+  const updateSql = `UPDATE contributionprofile SET awardname = ?, awardbody = ?, date = ?, certificate = ? WHERE alumniid = ?`;
+  const insertSql = `INSERT INTO contributionprofile (alumniid, awardname, awardbody, date, certificate) VALUES (?,?,?,?,?)`;
+
+  db.query(checkIfExistsSql, [userId], (err, result) => {
     if (err) {
-      console.error('CONTRI: ' + err.message);
-      return res.status(500).send(err.message);
+      console.error('CONTRI CHECK: ' + err.message);
+      return res.status(500).send('Database query error');
     }
-    res.json({ message: 'Contribution profile inserted successfully', result });
+
+    if (result.length > 0) {
+      res.json({ message: 'Record already exists for this user', recordExists: true, result });
+
+      db.query(updateSql, [awardName, awardBody, date, selectFilesJson, userId], (err, updateResult) => {
+        if (err) {
+          console.error('CONTRI UPDATE: ' + err.message);
+          return;
+        }
+        console.log('Contribution profile updated successfully', updateResult);
+      });
+
+    } else {
+      db.query(insertSql, [userId, awardName, awardBody, date, selectFilesJson], (err, insertResult) => {
+        if (err) {
+          console.error('CONTRI INSERT: ' + err.message);
+          return res.status(500).send('Error inserting contribution profile');
+        }
+        res.json({ message: 'Contribution profile inserted successfully', recordExists: false, insertResult });
+      });
+    }
   });
 });
 
@@ -136,7 +228,7 @@ router.get('/getSurveyGenInfo', (req, res) => {
   if (!userId){
     userId = req.userId;
   }
-  const query = `SELECT a.alumniid, a.name, g.*
+  const query = `SELECT a.alumniid, a.name, g.geninfoid, g.telnumber, g.mobilenumber, g.civilstatus, g.sex, g.region, g.province, g.residence
   FROM alumni a
   INNER JOIN generalinformation g ON a.alumniid = g.alumniid
   WHERE a.alumniid = ? ORDER BY g.geninfoid DESC`;
@@ -152,7 +244,7 @@ router.get('/getSurveyGenInfo', (req, res) => {
 
 router.get('/getSurveyEducBack', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT a.alumniid, a.name, e.*
+  const query = `SELECT e.educbackid, e.educattain, e.exampassed, e.reasonundergrad, e.reasongrad
   FROM alumni a
   INNER JOIN educationalbackground e ON a.alumniid = e.alumniid
   WHERE a.alumniid = ? ORDER BY e.educbackid DESC`;
@@ -168,7 +260,7 @@ router.get('/getSurveyEducBack', (req, res) => {
 
 router.get('/getSurveyTraining', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT a.alumniid, a.name, t.*
+  const query = `SELECT t.trainingid, t.trainingtitle, t.reason
   FROM alumni a
   INNER JOIN training t ON a.alumniid = t.alumniid
   WHERE a.alumniid = ? ORDER BY t.trainingid DESC`;
@@ -184,7 +276,7 @@ router.get('/getSurveyTraining', (req, res) => {
 
 router.get('/getEmployData', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT a.alumniid, a.name, e.*
+  const query = `SELECT e.*
   FROM alumni a
   INNER JOIN employmentdata e ON a.alumniid = e.alumniid
   WHERE a.alumniid = ? ORDER BY e.employmentdataid DESC`;
@@ -200,7 +292,7 @@ router.get('/getEmployData', (req, res) => {
 
 router.get('/getContriProfile', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT a.alumniid, a.name, c.*
+  const query = `SELECT c.*
   FROM alumni a
   INNER JOIN contributionprofile c ON a.alumniid = c.alumniid
   WHERE a.alumniid = ? ORDER BY c.contributionid DESC`;
