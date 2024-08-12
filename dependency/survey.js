@@ -347,7 +347,6 @@ router.get('/getSurveySummary', (req, res) => {
   MAX(ed.curriculumrelevance) AS ed_curriculumrelevance,
   MAX(ed.competencies) AS ed_competencies,
   MAX(ed.suggestions) AS ed_suggestions,
-  MAX(ed.status) AS ed_status,
   GROUP_CONCAT(DISTINCT cp.awardname) AS cp_awardname,
   GROUP_CONCAT(DISTINCT cp.awardbody) AS cp_awardbody,
   GROUP_CONCAT(DISTINCT cp.date) AS cp_date,
