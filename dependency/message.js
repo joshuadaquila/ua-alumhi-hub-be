@@ -30,7 +30,7 @@ router.get('/getMessages', (req, res) => {
     SELECT m.*, a.name, a.email, a.photourl
     FROM message m
     INNER JOIN alumni a ON m.userid = a.alumniid
-    ORDER BY m.date DESC
+    ORDER BY m.date ASC
   `;
 
   db.query(query, (err, results) => {
