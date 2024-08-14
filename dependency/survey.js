@@ -276,9 +276,9 @@ router.get('/getSurveyTraining', (req, res) => {
 
 router.get('/getEmployData', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT e.presentlyEmployed, e.reasonUnemployed, e.presentEmployStat, e.skillsAcquired, e.presentOccupation, e.majorLine, e.placeOfWork, e.firstJobAfterJob,
-    e.reasonStayingJob, e.firstJobRelatedToCourse, e.reasonAcceptingJob, e.reasonChangingJob, e.durationFirstJob, e.howFindFirstJob, e.durationJobSeeking, e.firstJobLvl,
-    e.secondJobLvl, e.earning, e.curriculumRelevance, e.competencies, e.suggestion
+  const query = `SELECT e.presentlyemployed, e.reasonnotemployed, e.presentemploystatus, e.skillsaquiredincollege, e.presentoccupation, e.lineofbusiness, e.placeofwork, e.firstjob,
+    e.reasonstayingjob, e.firstjobrelatedtocourse, e.reasonacceptingthejob, e.reasonchangingjob, e.firstjobduration, e.howfoundfirstjob, e.howlongfoundfirstjob, e.joblvlposfirstjob,
+    e.joblvlposcurrentjob, e.firstjobearning, e.curriculumrelevance, e.competencies, e.suggestions
   FROM alumni a
   INNER JOIN employmentdata e ON a.alumniid = e.alumniid
   WHERE a.alumniid = ? ORDER BY e.employmentdataid DESC`;
@@ -294,7 +294,7 @@ router.get('/getEmployData', (req, res) => {
 
 router.get('/getContriProfile', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT c.*
+  const query = `SELECT c.awardname, c.awardbody, c.date
   FROM alumni a
   INNER JOIN contributionprofile c ON a.alumniid = c.alumniid
   WHERE a.alumniid = ? ORDER BY c.contributionid DESC`;
