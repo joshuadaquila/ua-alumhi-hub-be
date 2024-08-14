@@ -277,7 +277,7 @@ router.get('/getSurveyTraining', (req, res) => {
 router.get('/getEmployData', (req, res) => {
   const userId = req.query.userId;
   const query = `SELECT e.presentlyemployed, e.reasonnotemployed, e.presentemploystatus, e.skillsaquiredincollege, e.presentoccupation, e.lineofbusiness, e.placeofwork, e.firstjob,
-    e.reasonstayingjob, e.firstjobrelatedtocourse, e.reasonacceptingthejob, e.reasonchangingjob, e.firstjobduration, e.howfoundfirstjob, e.howlongfoundfirstjob, e.joblvlposfirstjob,
+    e.reasonstayingonjob, e.firstjobrelatedtocourse, e.reasonacceptingthejob, e.reasonchangingjob, e.firstjobduration, e.howfoundfirstjob, e.howlongfoundfirstjob, e.joblvlposfirstjob,
     e.joblvlposcurrentjob, e.firstjobearning, e.curriculumrelevance, e.competencies, e.suggestions
   FROM alumni a
   INNER JOIN employmentdata e ON a.alumniid = e.alumniid
