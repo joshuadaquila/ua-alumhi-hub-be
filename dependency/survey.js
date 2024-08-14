@@ -294,7 +294,7 @@ router.get('/getEmployData', (req, res) => {
 
 router.get('/getContriProfile', (req, res) => {
   const userId = req.query.userId;
-  const query = `SELECT c.awardname, c.awardbody, c.date
+  const query = `SELECT c.awardname, c.awardbody, DATE_FORMAT(c.date, '%Y-%m-%d') AS date
   FROM alumni a
   INNER JOIN contributionprofile c ON a.alumniid = c.alumniid
   WHERE a.alumniid = ? ORDER BY c.contributionid DESC`;
