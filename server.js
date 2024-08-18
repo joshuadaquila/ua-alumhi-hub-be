@@ -66,7 +66,7 @@ app.post('/signup', (req, res) => {
         return res.status(500).send('Internal server error');
       }
 
-      const sql = 'INSERT INTO alumni (name, address, birthday, graduationyear, program, email, datecreated, password) VALUES (?,?,?,?,?,?,?)';
+      const sql = 'INSERT INTO alumni (name, address, birthday, graduationyear, program, email, datecreated, password) VALUES (?,?,?,?,?,?,?,?)';
       db.query(sql, [name, address, birthday, graduationyear, program, email, formattedDate, hashedPassword], (err, result) => {
         if (err) {
           console.error('Error executing query:', err);
