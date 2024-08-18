@@ -44,28 +44,40 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.post('/signup', (req, res) => {
-  
   const { name, address, birthday, graduationyear, email, password } = req.body;
 
   const now = new Date();
   const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
 
-  bcrypt.hash(password, 10, (err, hashedPassword) => {
+  const checkEmailQuery = 'SELECT * FROM alumni WHERE email = ?';
+  db.query(checkEmailQuery, [email], (err, results) => {
     if (err) {
-      console.error('Error hashing password:', err);
+      console.error('Error checking email:', err);
       return res.status(500).send('Internal server error');
     }
 
-    const sql = 'INSERT INTO alumni (name, address, birthday, graduationyear, email, datecreated, password) VALUES (?,?,?,?,?,?,?)';
-    db.query(sql, [name, address, birthday, graduationyear, email, formattedDate, hashedPassword], (err, result) => {
+    if (results.length > 0) {
+      return res.status(409).send('Email is already taken');
+    }
+
+    bcrypt.hash(password, 10, (err, hashedPassword) => {
       if (err) {
-        console.error('Error executing query:', err);
+        console.error('Error hashing password:', err);
         return res.status(500).send('Internal server error');
       }
-      res.send(result);
+
+      const sql = 'INSERT INTO alumni (name, address, birthday, graduationyear, email, datecreated, password) VALUES (?,?,?,?,?,?,?)';
+      db.query(sql, [name, address, birthday, graduationyear, email, formattedDate, hashedPassword], (err, result) => {
+        if (err) {
+          console.error('Error executing query:', err);
+          return res.status(500).send('Internal server error');
+        }
+        res.send(result);
+      });
     });
   });
 });
+
 
 app.post('/signin', (req, res) => {
   console.log("LOGGING IN");
