@@ -30,7 +30,7 @@ router.get('/getFutureEvents', (req, res) => {
 });
 
 router.get('/getPastEvents', (req, res) => {
-  const query = 'SELECT * FROM events WHERE date <= CURDATE() and endtime < CURTIME() AND status = "active" ORDER BY eventid DESC';
+  const query = 'SELECT e.*, COUNT(r.registrationid) as totalRegistration FROM events e INNER JOIN registration r ON e.eventid = r.eventid WHERE e.date <= CURDATE() and e.endtime < CURTIME() AND e.status = "active" ORDER BY eventid DESC';
   db.query(query, (err, results) => {
     if (err) {
       res.status(400).json({ message: 'Error fetching events' });
