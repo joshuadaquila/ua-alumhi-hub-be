@@ -245,7 +245,7 @@ router.get('/eventReport/:id', (req, res) => {
 });
 
 router.post('/setTotalAttended', (req, res) => {
-  const { eventid, attendeeCount } = req.body;
+  const { eventId, attendeeCount } = req.body;
 
   // Ensure eventid and attendeeCount are provided
   if (!eventid || attendeeCount === undefined) {
@@ -256,7 +256,7 @@ router.post('/setTotalAttended', (req, res) => {
                SET totalattendees = ? 
                WHERE eventid = ?`;
 
-  db.query(sql, [attendeeCount, eventid], (err, result) => {
+  db.query(sql, [attendeeCount, eventId], (err, result) => {
     if (err) {
       console.error('Error setting total attendees:', err);
       return res.status(500).send('Internal server error');
