@@ -244,4 +244,20 @@ router.get('/eventReport/:id', (req, res) => {
   });
 });
 
+router.post('/setTotalAttended', (req, res) => {
+  const { eventid, attendeeCount } = req.body;
+
+  const sql = `UPDATE events 
+               SET totalattendees = ? 
+               WHERE eventid = ?`;
+
+  db.query(sql, [eventid, attendeeCount], (err, result) => {
+    if (err) {
+      console.error('Error setting total attendee:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+});
+
 module.exports = router;
