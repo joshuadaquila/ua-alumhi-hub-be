@@ -247,9 +247,9 @@ router.get('/eventReport/:id', (req, res) => {
 router.post('/setTotalAttended', (req, res) => {
   const { eventId, attendeeCount } = req.body;
 
-  // Ensure eventid and attendeeCount are provided
-  if (!eventid || attendeeCount === undefined) {
-    return res.status(400).send('Bad request: eventid and attendeeCount are required.');
+  // Ensure eventId and attendeeCount are provided
+  if (!eventId || attendeeCount === undefined) {
+    return res.status(400).send('Bad request: eventId and attendeeCount are required.');
   }
 
   const sql = `UPDATE events 
@@ -264,6 +264,7 @@ router.post('/setTotalAttended', (req, res) => {
     res.send(result);
   });
 });
+
 
 
 module.exports = router;
