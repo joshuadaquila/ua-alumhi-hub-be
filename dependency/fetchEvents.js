@@ -19,7 +19,7 @@ router.get('/getEvents', (req, res) => {
 });
 
 router.get('/getFutureEvents', (req, res) => {
-  const query = 'SELECT e.*, COUNT(r.registrationid) as totalRegistration FROM events e INNER JOIN registration r ON e.eventid = r.eventid WHERE e.date > CURDATE() ORDER BY eventid DESC';
+  const query = 'SELECT e.*, COUNT(r.registrationid) AS totalRegistration FROM events e LEFT JOIN registration r ON e.eventid = r.eventid WHERE e.date > CURDATE() GROUP BY e.eventid ORDER BY e.eventid DESC;';
   db.query(query, (err, results) => {
     if (err) {
       res.status(400).json({ message: 'Error fetching events' });
@@ -30,7 +30,7 @@ router.get('/getFutureEvents', (req, res) => {
 });
 
 router.get('/getPastEvents', (req, res) => {
-  const query = 'SELECT e.*, COUNT(r.registrationid) as totalRegistration FROM events e INNER JOIN registration r ON e.eventid = r.eventid WHERE e.date <= CURDATE() and e.endtime < CURTIME() AND e.status = "active" ORDER BY eventid DESC';
+  const query = 'SELECT e.*, COUNT(r.registrationid) AS totalRegistration FROM events e INNER JOIN registration r ON e.eventid = r.eventid WHERE e.date <= CURDATE() AND e.endtime < CURTIME() AND e.status = "active" GROUP BY e.eventid ORDER BY e.eventid DESC;';
   db.query(query, (err, results) => {
     if (err) {
       res.status(400).json({ message: 'Error fetching events' });
