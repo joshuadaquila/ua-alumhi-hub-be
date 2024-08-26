@@ -798,18 +798,12 @@ router.get('/getEducAttainment', (req, res) => {
 
 router.get('/getContri', async (req, res) => {
   try {
-    // Connect to the database
-    const connection = await pool.getConnection();
-
     // Query to get total awardees and total alumni
-    const [rows] = await connection.query(`
+    const [rows] = await db.query(`
       SELECT 
         (SELECT COUNT(contributionid) FROM contributionprofile) AS totalAwardees, 
         (SELECT COUNT(alumniid) FROM alumni) AS totalAlumni
     `);
-
-    // Release the connection back to the pool
-    connection.release();
 
     // Send the result as JSON
     res.json(rows[0]); // Since we have only one row with both counts
