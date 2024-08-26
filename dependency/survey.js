@@ -799,25 +799,17 @@ router.get('/getEducAttainment', (req, res) => {
 router.get('/getContri', async (req, res) => {
   try {
     // Execute the query to get total awardees and total alumni
-    const [rows] = await db.query(`
+    const [results] = await db.query(`
       SELECT 
         (SELECT COUNT(contributionid) FROM contributionprofile) AS totalAwardees, 
         (SELECT COUNT(alumniid) FROM alumni) AS totalAlumni
     `);
 
-    // Log the rows for debugging
-    console.log('Query result:', rows);
-
-    // Check if rows is an array and has data
-    if (Array.isArray(rows) && rows.length > 0) {
-      res.json(rows[0]); // Send the result as JSON
-    } else {
-      res.status(404).json({ error: 'Data not found' });
-    }
+    // Directly send the result as JSON
+    res.json(results[0] || {}); // Ensure we handle the case where results[0] might be undefined
   } catch (error) {
     console.error('Error fetching totals:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 module.exports = router;
