@@ -799,22 +799,19 @@ router.get('/getEducAttainment', (req, res) => {
 
 router.get('/getContri', async (req, res) => {
   try {
-    // Execute the query to get total awardees
-    const awardeesResult = await db.query('SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile');
-    let totalAwardees = 0;
-    if (awardeesResult && awardeesResult[0] && awardeesResult[0].totalAwardees) {
-      totalAwardees = awardeesResult[0].totalAwardees;
-    }
+    // Query to get total awardees
+    const awardeesQuery = 'SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile';
+    const [awardeesResult] = await db.query(awardeesQuery);
 
-    // Execute the query to get total alumni
-    const alumniResult = await db.query('SELECT COUNT(alumniid) AS totalAlumni FROM alumni');
-    let totalAlumni = 0;
-    if (alumniResult && alumniResult[0] && alumniResult[0].totalAlumni) {
-      totalAlumni = alumniResult[0].totalAlumni;
-    }
+    // Query to get total alumni
+    const alumniQuery = 'SELECT COUNT(alumniid) AS totalAlumni FROM alumni';
+    const [alumniResult] = await db.query(alumniQuery);
 
     // Create an object with the counts
-    const result = { totalAwardees, totalAlumni };
+    const result = {
+      totalAwardees: awardeesResult[0]?.totalAwardees || 0,
+      totalAlumni: alumniResult[0]?.totalAlumni || 0
+    };
 
     // Log the result for debugging
     console.log('Query result:', result);
@@ -826,4 +823,5 @@ router.get('/getContri', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 module.exports = router;
