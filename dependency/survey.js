@@ -798,19 +798,19 @@ router.get('/getEducAttainment', (req, res) => {
 
 router.get('/getContri', async (req, res) => {
   try {
-    // Query to get total awardees and total alumni
-    const [results] = await db.query(`
+    // Execute the query to get total awardees and total alumni
+    const [rows] = await db.query(`
       SELECT 
         (SELECT COUNT(contributionid) FROM contributionprofile) AS totalAwardees, 
         (SELECT COUNT(alumniid) FROM alumni) AS totalAlumni
     `);
 
-    // Log the result for debugging
-    console.log('Query result:', results);
+    // Log the rows for debugging
+    console.log('Query result:', rows);
 
-    // Check if the result is as expected
-    if (Array.isArray(results) && results.length > 0) {
-      res.json(results[0]); // Since we have only one row with both counts
+    // Check if rows is an array and has data
+    if (Array.isArray(rows) && rows.length > 0) {
+      res.json(rows[0]); // Send the result as JSON
     } else {
       res.status(404).json({ error: 'Data not found' });
     }
