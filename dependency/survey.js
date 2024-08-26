@@ -797,29 +797,44 @@ router.get('/getEducAttainment', (req, res) => {
 });
 
 
-router.get('/getContri', async (req, res) => {
+router.get('/getTotalAwardees', async (req, res) => {
   try {
     // Query to get total awardees
-    const awardeesQuery = 'SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile';
-    const [awardeesResult] = await db.query(awardeesQuery);
+    const [awardeesResult] = await db.query('SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile');
 
-    // Query to get total alumni
-    const alumniQuery = 'SELECT COUNT(alumniid) AS totalAlumni FROM alumni';
-    const [alumniResult] = await db.query(alumniQuery);
-
-    // Create an object with the counts
+    // Create an object with the total awardees
     const result = {
-      totalAwardees: awardeesResult[0]?.totalAwardees || 0,
-      totalAlumni: alumniResult[0]?.totalAlumni || 0
+      totalAwardees: awardeesResult[0]?.totalAwardees || 0
     };
 
     // Log the result for debugging
-    console.log('Query result:', result);
+    console.log('Total Awardees result:', result);
 
     // Send the result as JSON
     res.json(result);
   } catch (error) {
-    console.error('Error fetching totals:', error);
+    console.error('Error fetching total awardees:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.get('/getTotalAlumni', async (req, res) => {
+  try {
+    // Query to get total alumni
+    const [alumniResult] = await db.query('SELECT COUNT(alumniid) AS totalAlumni FROM alumni');
+
+    // Create an object with the total alumni
+    const result = {
+      totalAlumni: alumniResult[0]?.totalAlumni || 0
+    };
+
+    // Log the result for debugging
+    console.log('Total Alumni result:', result);
+
+    // Send the result as JSON
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching total alumni:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
