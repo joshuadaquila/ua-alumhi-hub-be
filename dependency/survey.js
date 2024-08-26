@@ -807,18 +807,18 @@ router.get('/getContri', async (req, res) => {
     `);
 
     // Extract rows from the result
-    const rows = result[0];
+    res.json(result);
 
     // Log the rows for debugging
-    console.log('Query result:', rows);
+    // console.log('Query result:', rows);
 
     // Check if rows is an array and has data
-    if (rows.length > 0) {
-      // Send the result as JSON
-      res.json(rows[0]);
-    } else {
-      res.status(404).json({ error: 'Data not found' });
-    }
+    // if (rows.length > 0) {
+    //   // Send the result as JSON
+    //   res.json(rows[0]);
+    // } else {
+    //   res.status(404).json({ error: 'Data not found' });
+    // }
   } catch (error) {
     console.error('Error fetching totals:', error);
     res.status(500).json({ error: 'Internal Server Error' });
