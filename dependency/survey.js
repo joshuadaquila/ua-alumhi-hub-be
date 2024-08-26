@@ -809,6 +809,8 @@ router.get('/getContri', async (req, res) => {
     // Extract rows from the result
     const rows = result.rows;
 
+    console.log(rows);
+
     if (!rows) {
       res.status(404).json({ error: 'Data not found' });
     } else {
