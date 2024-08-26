@@ -733,5 +733,67 @@ router.get('/getEmploymentCounts', (req, res) => {
   });
 });
 
+app.get('/getEducAttainment', (req, res) => {
+  // Query for reasongrad
+  const queryGrad = `
+      SELECT COUNT(educbackid) AS gradCount
+      FROM educationalbackground
+      WHERE reasongrad LIKE '%"highGrades":true%'
+         OR reasongrad LIKE '%"goodGradesHS":true%'
+         OR reasongrad LIKE '%"parentInfluence":true%'
+         OR reasongrad LIKE '%"peerInfluence":true%'
+         OR reasongrad LIKE '%"roleModel":true%'
+         OR reasongrad LIKE '%"passionProfession":true%'
+         OR reasongrad LIKE '%"immediateEmployment":true%'
+         OR reasongrad LIKE '%"statusPrestige":true%'
+         OR reasongrad LIKE '%"courseAvailability":true%'
+         OR reasongrad LIKE '%"careerAdvancement":true%'
+         OR reasongrad LIKE '%"affordableFamily":true%'
+         OR reasongrad LIKE '%"attractiveCompensation":true%'
+         OR reasongrad LIKE '%"employmentAbroad":true%'
+         OR reasongrad LIKE '%"noParticularChoice":true%'
+         OR reasongrad LIKE '%"others":true%';
+  `;
+
+  // Query for reasonundergrad
+  const queryUndergrad = `
+      SELECT COUNT(educbackid) AS undergradCount
+      FROM educationalbackground
+      WHERE reasonundergrad LIKE '%"highGrades":true%'
+         OR reasonundergrad LIKE '%"goodGradesHS":true%'
+         OR reasonundergrad LIKE '%"parentInfluence":true%'
+         OR reasonundergrad LIKE '%"peerInfluence":true%'
+         OR reasonundergrad LIKE '%"roleModel":true%'
+         OR reasonundergrad LIKE '%"passionProfession":true%'
+         OR reasonundergrad LIKE '%"immediateEmployment":true%'
+         OR reasonundergrad LIKE '%"statusPrestige":true%'
+         OR reasonundergrad LIKE '%"courseAvailability":true%'
+         OR reasonundergrad LIKE '%"careerAdvancement":true%'
+         OR reasonundergrad LIKE '%"affordableFamily":true%'
+         OR reasonundergrad LIKE '%"attractiveCompensation":true%'
+         OR reasonundergrad LIKE '%"employmentAbroad":true%'
+         OR reasonundergrad LIKE '%"noParticularChoice":true%'
+         OR reasonundergrad LIKE '%"others":true%';
+  `;
+
+  // Execute both queries
+  db.query(queryGrad, (errGrad, resultGrad) => {
+      if (errGrad) {
+          return res.status(500).send('Error executing query for reasongrad: ' + errGrad);
+      }
+
+      db.query(queryUndergrad, (errUndergrad, resultUndergrad) => {
+          if (errUndergrad) {
+              return res.status(500).send('Error executing query for reasonundergrad: ' + errUndergrad);
+          }
+
+          // Send the results as a JSON response
+          res.json({
+              gradCount: resultGrad[0].gradCount,
+              undergradCount: resultUndergrad[0].undergradCount
+          });
+      });
+  });
+});
 
 module.exports = router;
