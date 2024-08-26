@@ -799,27 +799,24 @@ router.get('/getEducAttainment', (req, res) => {
 
 router.get('/getContri', async (req, res) => {
   try {
-    // Execute the query to get total awardees and total alumni
-    const result = await db.query(`
-      SELECT 
-        (SELECT COUNT(contributionid) FROM contributionprofile) AS totalAwardees, 
-        (SELECT COUNT(alumniid) FROM alumni) AS totalAlumni
-    `);
+    // Execute the queries to get total awardees and total alumni
+    const [awardeesResult, alumniResult] = await Promise.all([
+      db.query('SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile'),
+      db.query('SELECT COUNT(alumniid) AS totalAlumni FROM alumni')
+    ]);
 
-    // Extract rows from the result
-    const rows = result.rows;
+    // Extract the counts from the results
+    const totalAwardees = awardeesResult.rows[0].totalAwardees;
+    const totalAlumni = alumniResult.rows[0].totalAlumni;
 
-    console.log(rows);
+    // Create an object with the counts
+    const result = { totalAwardees, totalAlumni };
 
-    if (!rows) {
-      res.status(404).json({ error: 'Data not found' });
-    } else {
-      // Log the rows for debugging
-      console.log('Query result:', rows);
+    // Log the result for debugging
+    console.log('Query result:', result);
 
-      // Send the result as JSON
-      res.json(rows[0]);
-    }
+    // Send the result as JSON
+    res.json(result);
   } catch (error) {
     console.error('Error fetching totals:', error);
     res.status(500).json({ error: 'Internal Server Error' });
