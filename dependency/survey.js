@@ -796,18 +796,26 @@ router.get('/getEducAttainment', (req, res) => {
   });
 });
 
+
 router.get('/getContri', async (req, res) => {
   try {
     // Execute the query to get total awardees and total alumni
-    const [rows] = await db.query(`
+    const result = await db.query(`
       SELECT 
         (SELECT COUNT(contributionid) FROM contributionprofile) AS totalAwardees, 
         (SELECT COUNT(alumniid) FROM alumni) AS totalAlumni
     `);
 
-    // Check if the result is valid and has the expected format
-    if (Array.isArray(rows) && rows.length > 0) {
-      res.json(rows[0]); // Send the result as JSON
+    // Extract rows from the result
+    const rows = result[0];
+
+    // Log the rows for debugging
+    console.log('Query result:', rows);
+
+    // Check if rows is an array and has data
+    if (rows.length > 0) {
+      // Send the result as JSON
+      res.json(rows[0]);
     } else {
       res.status(404).json({ error: 'Data not found' });
     }
