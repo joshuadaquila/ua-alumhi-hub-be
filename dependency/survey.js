@@ -807,7 +807,7 @@ router.get('/getContri', async (req, res) => {
     `);
 
     // Extract rows from the result
-    res.json(result);
+    res.send(result);
 
     // Log the rows for debugging
     // console.log('Query result:', rows);
