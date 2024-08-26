@@ -687,27 +687,27 @@ router.get('/getEmploymentCounts', (req, res) => {
 
     UNION ALL
 
-    -- Count of Occupation
-    SELECT 'Occupation' AS category, presentoccupation AS value, COUNT(*) AS count
+    -- Count of Job Level Position
+    SELECT 'First Job Level Position' AS category, joblvlposfirstjob AS value, COUNT(*) AS count
     FROM (
-        SELECT LOWER(presentoccupation) AS presentoccupation
+        SELECT LOWER(joblvlposfirstjob) AS joblvlposfirstjob
         FROM employmentdata
-        WHERE presentoccupation IS NOT NULL AND TRIM(presentoccupation) <> ''  -- Exclude blank and null values
-        GROUP BY LOWER(presentoccupation)
-    ) AS presentoccupation_counts
-    GROUP BY presentoccupation
+        WHERE joblvlposfirstjob IS NOT NULL AND TRIM(joblvlposfirstjob) <> ''  -- Exclude blank and null values
+        GROUP BY LOWER(joblvlposfirstjob)
+    ) AS joblvlposfirstjob_counts
+    GROUP BY joblvlposfirstjob
 
     UNION ALL
 
-    -- Count of Line of Business
-    SELECT 'Line of Business' AS category, lineofbusiness AS value, COUNT(*) AS count
+    -- Count of Job Earning
+    SELECT 'Job Earning' AS category, firstjobearning AS value, COUNT(*) AS count
     FROM (
-        SELECT LOWER(lineofbusiness) AS lineofbusiness
+        SELECT LOWER(firstjobearning) AS firstjobearning
         FROM employmentdata
-        WHERE lineofbusiness IS NOT NULL AND TRIM(lineofbusiness) <> ''  -- Exclude blank and null values
-        GROUP BY LOWER(lineofbusiness)
-    ) AS lineofbusiness_counts
-    GROUP BY lineofbusiness
+        WHERE firstjobearning IS NOT NULL AND TRIM(firstjobearning) <> ''  -- Exclude blank and null values
+        GROUP BY LOWER(firstjobearning)
+    ) AS firstjobearning_counts
+    GROUP BY firstjobearning
 
     UNION ALL
 
