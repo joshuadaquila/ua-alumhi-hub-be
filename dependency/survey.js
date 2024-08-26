@@ -797,46 +797,33 @@ router.get('/getEducAttainment', (req, res) => {
 });
 
 
-router.get('/getTotalAwardees', async (req, res) => {
-  try {
-    // Query to get total awardees
-    const [awardeesResult] = await db.query('SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile');
+router.get('/getTotalAwardee', (req, res) => {
+  const query = `
+  SELECT COUNT(contributionid) as totalawardee
+  FROM contributionprofile;
+`;
 
-    // Create an object with the total awardees
-    const result = {
-      totalAwardees: awardeesResult[0]?.totalAwardees || 0
-    };
-
-    // Log the result for debugging
-    console.log('Total Awardees result:', result);
-
-    // Send the result as JSON
-    res.json(result);
-  } catch (error) {
-    console.error('Error fetching total awardees:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+  db.query(query, (err, results) => {
+    if (err) {
+      res.status(400).json({ message: 'Error fetching events' });
+    } else {
+      res.json(results);
+    }
+  });
 });
 
-router.get('/getTotalAlumni', async (req, res) => {
-  try {
-    // Query to get total alumni
-    const [alumniResult] = await db.query('SELECT COUNT(alumniid) AS totalAlumni FROM alumni');
+router.get('/getTotalAlumni', (req, res) => {
+  const query = `
+  SELECT COUNT(alumniid) as totalalumni
+  FROM alumni;
+`;
 
-    // Create an object with the total alumni
-    const result = {
-      totalAlumni: alumniResult[0]?.totalAlumni || 0
-    };
-
-    // Log the result for debugging
-    console.log('Total Alumni result:', result);
-
-    // Send the result as JSON
-    res.json(result);
-  } catch (error) {
-    console.error('Error fetching total alumni:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
+  db.query(query, (err, results) => {
+    if (err) {
+      res.status(400).json({ message: 'Error fetching events' });
+    } else {
+      res.json(results);
+    }
+  });
 });
-
 module.exports = router;
