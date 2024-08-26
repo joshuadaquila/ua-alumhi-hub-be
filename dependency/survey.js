@@ -826,4 +826,23 @@ router.get('/getTotalAlumni', (req, res) => {
     }
   });
 });
+
+router.get('/getYearProgram', (req, res) => {
+  const query = `
+  SELECT graduationyear, program, COUNT(*) AS count
+  FROM alumni
+  WHERE status = 'active'
+  GROUP BY graduationyear, program
+  ORDER BY graduationyear, count DESC;
+
+`;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      res.status(400).json({ message: 'Error fetching events' });
+    } else {
+      res.json(results);
+    }
+  });
+});
 module.exports = router;
