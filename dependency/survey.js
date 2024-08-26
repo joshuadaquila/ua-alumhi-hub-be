@@ -805,6 +805,7 @@ router.get('/getContri', async (req, res) => {
       db.query('SELECT COUNT(alumniid) AS totalAlumni FROM alumni')
     ]);
 
+    console.log("awardees: ", awardeesResult)
     // Initialize default values
     let totalAwardees = 0;
     let totalAlumni = 0;
