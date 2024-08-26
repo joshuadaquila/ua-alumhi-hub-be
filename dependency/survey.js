@@ -733,7 +733,7 @@ router.get('/getEmploymentCounts', (req, res) => {
   });
 });
 
-app.get('/getEducAttainment', (req, res) => {
+router.get('/getEducAttainment', (req, res) => {
   // Query for reasongrad
   const queryGrad = `
       SELECT COUNT(educbackid) AS gradCount
