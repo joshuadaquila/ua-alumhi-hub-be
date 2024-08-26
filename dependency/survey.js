@@ -809,15 +809,14 @@ router.get('/getContri', async (req, res) => {
     // Extract rows from the result
     const rows = result.rows;
 
-    // Log the rows for debugging
-    console.log('Query result:', rows);
+    if (!rows) {
+      res.status(404).json({ error: 'Data not found' });
+    } else {
+      // Log the rows for debugging
+      console.log('Query result:', rows);
 
-    // Check if rows is an array and has data
-    if (rows.length > 0) {
       // Send the result as JSON
       res.json(rows[0]);
-    } else {
-      res.status(404).json({ error: 'Data not found' });
     }
   } catch (error) {
     console.error('Error fetching totals:', error);
