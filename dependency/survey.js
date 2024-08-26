@@ -801,22 +801,21 @@ router.get('/getContri', async (req, res) => {
   try {
     // Execute the queries to get total awardees and total alumni
     const [awardeesResult, alumniResult] = await Promise.all([
-      db.query('SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile'),
-      db.query('SELECT COUNT(alumniid) AS totalAlumni FROM alumni')
+      db.query('SELECT COUNT(contributionid) AS totalAwardees FROM contributionprofile').then(result => result[0]),
+      db.query('SELECT COUNT(alumniid) AS totalAlumni FROM alumni').then(result => result[0])
     ]);
 
-    console.log("awardees: ", awardeesResult)
     // Initialize default values
     let totalAwardees = 0;
     let totalAlumni = 0;
 
     // Extract the counts from the results
-    if (awardeesResult && awardeesResult.rows && awardeesResult.rows[0]) {
-      totalAwardees = awardeesResult.rows[0].totalAwardees;
+    if (awardeesResult && awardeesResult.totalAwardees) {
+      totalAwardees = awardeesResult.totalAwardees;
     }
 
-    if (alumniResult && alumniResult.rows && alumniResult.rows[0]) {
-      totalAlumni = alumniResult.rows[0].totalAlumni;
+    if (alumniResult && alumniResult.totalAlumni) {
+      totalAlumni = alumniResult.totalAlumni;
     }
 
     // Create an object with the counts
