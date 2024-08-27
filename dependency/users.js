@@ -62,7 +62,7 @@ router.get('/getAlumniInfo', (req, res) => {
 
 router.get('/getJobInfo', (req, res) => {
   const userid = req.userId;
-  const query = `SELECT presentoccupation FROM employmentdata WHERE status = "active" and alumniid = ${userid}`;
+  const query = `SELECT presentoccupation FROM employmentdata WHERE alumniid = ${userid}`;
   console.log(query);
   db.query(query, (err, results) => {
     if (err) {
