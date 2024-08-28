@@ -243,7 +243,10 @@ router.get('/getSurveyGenInfo', (req, res) => {
 });
 
 router.get('/getSurveyEducBack', (req, res) => {
-  const userId = req.query.userId;
+  let userId = req.query.userId;
+  if (!userId){
+    userId = req.userId;
+  }
   const query = `SELECT e.educattain, e.exampassed, e.reasonundergrad, e.reasongrad
   FROM alumni a
   INNER JOIN educationalbackground e ON a.alumniid = e.alumniid
@@ -259,7 +262,10 @@ router.get('/getSurveyEducBack', (req, res) => {
 });
 
 router.get('/getSurveyTraining', (req, res) => {
-  const userId = req.userId;
+  let userId = req.query.userId;
+  if (!userId){
+    userId = req.userId;
+  }
   const query = `SELECT t.trainingtitle, t.reason
   FROM alumni a
   INNER JOIN training t ON a.alumniid = t.alumniid
@@ -275,7 +281,10 @@ router.get('/getSurveyTraining', (req, res) => {
 });
 
 router.get('/getEmployData', (req, res) => {
-  const userId = req.query.userId;
+  let userId = req.query.userId;
+  if (!userId){
+    userId = req.userId;
+  }
   const query = `SELECT e.presentlyemployed, e.reasonnotemployed, e.presentemploystatus, e.skillsaquiredincollege, e.presentoccupation, e.lineofbusiness, e.placeofwork, e.firstjob,
     e.reasonstayingonjob, e.firstjobrelatedtocourse, e.reasonacceptingthejob, e.reasonchangingjob, e.firstjobduration, e.howfoundfirstjob, e.howlongfoundfirstjob, e.joblvlposfirstjob,
     e.joblvlposcurrentjob, e.firstjobearning, e.curriculumrelevance, e.competencies, e.suggestions
@@ -293,7 +302,10 @@ router.get('/getEmployData', (req, res) => {
 });
 
 router.get('/getContriProfile', (req, res) => {
-  const userId = req.query.userId;
+  let userId = req.query.userId;
+  if (!userId){
+    userId = req.userId;
+  }
   const query = `SELECT c.awardname, c.awardbody, DATE_FORMAT(c.date, '%Y-%m-%d') AS date
   FROM alumni a
   INNER JOIN contributionprofile c ON a.alumniid = c.alumniid
