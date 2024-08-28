@@ -259,7 +259,7 @@ router.get('/getSurveyEducBack', (req, res) => {
 });
 
 router.get('/getSurveyTraining', (req, res) => {
-  const userId = req.query.userId;
+  const userId = req.userId;
   const query = `SELECT t.trainingtitle, t.reason
   FROM alumni a
   INNER JOIN training t ON a.alumniid = t.alumniid
