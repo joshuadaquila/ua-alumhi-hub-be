@@ -1,6 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const db = require('./db');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
+const { bucket } = require('./firebaseAdmin'); // Import bucket from firebaseAdmin.js
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+router.post('/survey/uploadImage', upload.single('image'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  try {
+    const fileName = `${uuidv4()}.jpg`; // Generate a unique file name
+    const fileUpload = bucket.file(`images/${fileName}`);
+
+    // Upload the file to Firebase Storage
+    await fileUpload.save(req.file.buffer, {
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+      resumable: false,
+    });
+
+    // Get the public URL of the uploaded file
+    const [publicUrl] = await fileUpload.getSignedUrl({
+      action: 'read',
+      expires: '03-09-2491', // Set expiration date as needed
+    });
+
+    res.json({ message: 'Image uploaded successfully!', url: publicUrl });
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    res.status(500).json({ error: 'Failed to upload image.' });
+  }
+});
 
 router.post('/submitGeneralInfo', (req, res) => {
   const userId = req.userId;
