@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const db = require('./db')
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { bucket } = require('./firebaseAdmin'); // Import bucket from firebaseAdmin.js
