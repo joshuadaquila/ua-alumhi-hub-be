@@ -878,11 +878,22 @@ router.get('/getTotalAlumni', (req, res) => {
 
 router.get('/getYearProgram', (req, res) => {
   const query = `
-  SELECT graduationyear, program, COUNT(*) AS count
-  FROM alumni
-  WHERE status = 'active'
-  GROUP BY graduationyear, program
-  ORDER BY graduationyear, count DESC;
+  SELECT 
+  a.graduationyear, 
+  a.program, 
+  COUNT(*) AS count, 
+  gd.totalGraduates
+FROM 
+  alumni a
+LEFT JOIN 
+  graduationData gd ON a.graduationyear = gd.year
+WHERE 
+  a.status = 'active'
+GROUP BY 
+  a.graduationyear, a.program, gd.totalGraduates
+ORDER BY 
+  a.graduationyear, count DESC;
+;
 
 `;
 
