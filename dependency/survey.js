@@ -712,64 +712,44 @@ router.get('/getCounts', (req, res) => {
 router.get('/getEmploymentCounts', (req, res) => {
   // SQL query to get counts for various employment categories
   const query = `
-    -- Count of Presently Employed
-    SELECT 'Presently Employed' AS category, presentlyemployed AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(presentlyemployed) AS presentlyemployed
-        FROM employmentdata
-        WHERE presentlyemployed IS NOT NULL AND TRIM(presentlyemployed) <> ''  -- Exclude blank and null values
-        GROUP BY LOWER(presentlyemployed)
-    ) AS presentlyemployed_counts
-    GROUP BY presentlyemployed
-
-    UNION ALL
-
-    -- Count of Employment Status
-    SELECT 'Employment Status' AS category, presentemploystatus AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(presentemploystatus) AS presentemploystatus
-        FROM employmentdata
-        WHERE presentemploystatus IS NOT NULL AND TRIM(presentemploystatus) <> ''  -- Exclude blank and null values
-        GROUP BY LOWER(presentemploystatus)
-    ) AS presentemploystatus_counts
-    GROUP BY presentemploystatus
-
-    UNION ALL
-
-    -- Count of Job Level Position
-    SELECT 'First Job Level Position' AS category, joblvlposfirstjob AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(joblvlposfirstjob) AS joblvlposfirstjob
-        FROM employmentdata
-        WHERE joblvlposfirstjob IS NOT NULL AND TRIM(joblvlposfirstjob) <> ''  -- Exclude blank and null values
-        GROUP BY LOWER(joblvlposfirstjob)
-    ) AS joblvlposfirstjob_counts
-    GROUP BY joblvlposfirstjob
-
-    UNION ALL
-
-    -- Count of Job Earning
-    SELECT 'Job Earning' AS category, firstjobearning AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(firstjobearning) AS firstjobearning
-        FROM employmentdata
-        WHERE firstjobearning IS NOT NULL AND TRIM(firstjobearning) <> ''  -- Exclude blank and null values
-        GROUP BY LOWER(firstjobearning)
-    ) AS firstjobearning_counts
-    GROUP BY firstjobearning
-
-    UNION ALL
-
-    -- Count of Place of Work
-    SELECT 'Place of Work' AS category, placeofwork AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(placeofwork) AS placeofwork
-        FROM employmentdata
-        WHERE placeofwork IS NOT NULL AND TRIM(placeofwork) <> ''  -- Exclude blank and null values
-        GROUP BY LOWER(placeofwork)
-    ) AS placeofwork_counts
-    GROUP BY placeofwork;
-
+  -- Count of Presently Employed
+  SELECT 'Presently Employed' AS category, LOWER(presentlyemployed) AS value, COUNT(*) AS count
+  FROM employmentdata
+  WHERE presentlyemployed IS NOT NULL AND TRIM(presentlyemployed) <> ''  -- Exclude blank and null values
+  GROUP BY LOWER(presentlyemployed)
+  
+  UNION ALL
+  
+  -- Count of Employment Status
+  SELECT 'Employment Status' AS category, LOWER(presentemploystatus) AS value, COUNT(*) AS count
+  FROM employmentdata
+  WHERE presentemploystatus IS NOT NULL AND TRIM(presentemploystatus) <> ''  -- Exclude blank and null values
+  GROUP BY LOWER(presentemploystatus)
+  
+  UNION ALL
+  
+  -- Count of Job Level Position
+  SELECT 'First Job Level Position' AS category, LOWER(joblvlposfirstjob) AS value, COUNT(*) AS count
+  FROM employmentdata
+  WHERE joblvlposfirstjob IS NOT NULL AND TRIM(joblvlposfirstjob) <> ''  -- Exclude blank and null values
+  GROUP BY LOWER(joblvlposfirstjob)
+  
+  UNION ALL
+  
+  -- Count of Job Earning
+  SELECT 'Job Earning' AS category, LOWER(firstjobearning) AS value, COUNT(*) AS count
+  FROM employmentdata
+  WHERE firstjobearning IS NOT NULL AND TRIM(firstjobearning) <> ''  -- Exclude blank and null values
+  GROUP BY LOWER(firstjobearning)
+  
+  UNION ALL
+  
+  -- Count of Place of Work
+  SELECT 'Place of Work' AS category, LOWER(placeofwork) AS value, COUNT(*) AS count
+  FROM employmentdata
+  WHERE placeofwork IS NOT NULL AND TRIM(placeofwork) <> ''  -- Exclude blank and null values
+  GROUP BY LOWER(placeofwork);
+  
   `;
 
   db.query(query, (err, results) => {
