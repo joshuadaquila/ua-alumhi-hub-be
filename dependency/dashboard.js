@@ -41,4 +41,24 @@ router.get('/getDashboardStats', (req, res) => {
   handleQuery(query, res);
 });
 
+router.post('/setGraduateTotal', (req, res) => {
+  const userid = req.userId;
+  const { year, totalGraduates } = req.body;
+
+  const sql = `
+    INSERT INTO graduationData (year, totalGraduates)
+    VALUES (?, ?)
+    ON DUPLICATE KEY UPDATE totalGraduates = VALUES(totalGraduates)
+  `;
+
+  db.query(sql, [year, totalGraduates], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+});
+
+
 module.exports = router;
