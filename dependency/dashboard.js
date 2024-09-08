@@ -48,7 +48,7 @@ router.post('/setGraduateTotalBSIT', (req, res) => {
   const sql = `
     INSERT INTO graduationData (year, totalbsit)
     VALUES (?, ?)
-    ON DUPLICATE KEY UPDATE totalGraduatesIt = VALUES(totalGraduatesIt)
+    ON DUPLICATE KEY UPDATE totalbsit = VALUES(totalGraduatesIt)
   `;
 
   db.query(sql, [year, totalGraduatesIt], (err, result) => {
@@ -67,7 +67,7 @@ router.post('/setGraduateTotalBSCS', (req, res) => {
   const sql = `
     INSERT INTO graduationData (year, totalbscs)
     VALUES (?, ?)
-    ON DUPLICATE KEY UPDATE totalGraduatesCs = VALUES(totalGraduatesCs)
+    ON DUPLICATE KEY UPDATE totalbscs = VALUES(totalGraduatesCs)
   `;
 
   db.query(sql, [year, totalGraduatesCs], (err, result) => {
