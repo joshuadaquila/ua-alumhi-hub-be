@@ -40,7 +40,6 @@ router.get('/getDashboardStats', (req, res) => {
   `;
   handleQuery(query, res);
 });
-
 router.post('/setGraduateTotalBSIT', (req, res) => {
   const userid = req.userId;
   const { year, totalGraduatesIt } = req.body;
@@ -48,7 +47,7 @@ router.post('/setGraduateTotalBSIT', (req, res) => {
   const sql = `
     INSERT INTO graduationData (year, totalbsit)
     VALUES (?, ?)
-    ON DUPLICATE KEY UPDATE totalbsit = VALUES(totalGraduatesIt)
+    ON DUPLICATE KEY UPDATE totalbsit = VALUES(totalbsit)
   `;
 
   db.query(sql, [year, totalGraduatesIt], (err, result) => {
@@ -67,7 +66,7 @@ router.post('/setGraduateTotalBSCS', (req, res) => {
   const sql = `
     INSERT INTO graduationData (year, totalbscs)
     VALUES (?, ?)
-    ON DUPLICATE KEY UPDATE totalbscs = VALUES(totalGraduatesCs)
+    ON DUPLICATE KEY UPDATE totalbscs = VALUES(totalbscs)
   `;
 
   db.query(sql, [year, totalGraduatesCs], (err, result) => {
@@ -78,5 +77,6 @@ router.post('/setGraduateTotalBSCS', (req, res) => {
     res.send(result);
   });
 });
+
 
 module.exports = router;
