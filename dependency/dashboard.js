@@ -41,17 +41,17 @@ router.get('/getDashboardStats', (req, res) => {
   handleQuery(query, res);
 });
 
-router.post('/setGraduateTotal', (req, res) => {
+router.post('/setGraduateTotalBSIT', (req, res) => {
   const userid = req.userId;
-  const { year, totalGraduates } = req.body;
+  const { year, totalGraduatesIt } = req.body;
 
   const sql = `
-    INSERT INTO graduationData (year, totalGraduates)
+    INSERT INTO graduationData (year, totalbsit)
     VALUES (?, ?)
-    ON DUPLICATE KEY UPDATE totalGraduates = VALUES(totalGraduates)
+    ON DUPLICATE KEY UPDATE totalGraduatesIt = VALUES(totalGraduatesIt)
   `;
 
-  db.query(sql, [year, totalGraduates], (err, result) => {
+  db.query(sql, [year, totalGraduatesIt], (err, result) => {
     if (err) {
       console.error('Error executing query:', err);
       return res.status(500).send('Internal server error');
@@ -60,5 +60,23 @@ router.post('/setGraduateTotal', (req, res) => {
   });
 });
 
+router.post('/setGraduateTotalBSCS', (req, res) => {
+  const userid = req.userId;
+  const { year, totalGraduatesCs } = req.body;
+
+  const sql = `
+    INSERT INTO graduationData (year, totalbscs)
+    VALUES (?, ?)
+    ON DUPLICATE KEY UPDATE totalGraduatesCs = VALUES(totalGraduatesCs)
+  `;
+
+  db.query(sql, [year, totalGraduatesCs], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+});
 
 module.exports = router;
