@@ -861,18 +861,18 @@ router.get('/getYearProgram', (req, res) => {
   SELECT 
   a.graduationyear, 
   a.program, 
-  COUNT(*) AS count, 
-  gd.totalGraduates
+  COUNT(*) AS count
 FROM 
   alumni a
-LEFT JOIN 
-  graduationData gd ON a.graduationyear = gd.year
 WHERE 
   a.status = 'active'
 GROUP BY 
-  a.graduationyear, a.program, gd.totalGraduates
+  a.graduationyear, 
+  a.program
 ORDER BY 
-  a.graduationyear, count DESC;
+  a.graduationyear, 
+  count DESC;
+
 ;
 
 `;
