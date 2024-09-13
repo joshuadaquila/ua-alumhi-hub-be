@@ -423,18 +423,27 @@ router.get('/getSurveySummary', (req, res) => {
       console.log("ERROR GET SURVEY SUMMARY", err);
       res.status(400).json({ message: 'Error fetching survey summary' });
     } else {
-      // Preprocess the results to remove braces and brackets
+      // Preprocess the results to remove braces, brackets, and quotes
       const cleanedResults = results.map(row => {
+        const cleanField = (field) => field ? field.replace(/[{}[\]"']/g, '') : null;
         return {
           ...row,
-          tr_trainingtitle: row.tr_trainingtitle ? row.tr_trainingtitle.replace(/[{}[\]]/g, '') : null,
-          tr_reason: row.tr_reason ? row.tr_reason.replace(/[{}[\]]/g, '') : null,
-          cp_awardname: row.cp_awardname ? row.cp_awardname.replace(/[{}[\]]/g, '') : null,
-          cp_awardbody: row.cp_awardbody ? row.cp_awardbody.replace(/[{}[\]]/g, '') : null,
-          cp_date: row.cp_date ? row.cp_date.replace(/[{}[\]]/g, '') : null,
-          cp_certificate: row.cp_certificate ? row.cp_certificate.replace(/[{}[\]]/g, '') : null,
-          eb_reasonundergrad: row.eb_reasonundergrad ? row.eb_reasonundergrad.replace(/[{}[\]]/g, '') : null,
-          eb_reasongrad: row.eb_reasongrad ? row.eb_reasongrad.replace(/[{}[\]]/g, '') : null
+          tr_trainingtitle: cleanField(row.tr_trainingtitle),
+          tr_reason: cleanField(row.tr_reason),
+          cp_awardname: cleanField(row.cp_awardname),
+          cp_awardbody: cleanField(row.cp_awardbody),
+          cp_date: cleanField(row.cp_date),
+          cp_certificate: cleanField(row.cp_certificate),
+          eb_reasonundergrad: cleanField(row.eb_reasonundergrad),
+          eb_reasongrad: cleanField(row.eb_reasongrad),
+          eb_educattain: cleanField(row.eb_educattain),
+          eb_exampassed: cleanField(row.eb_exampassed),
+          ed_reasonnotemployed: cleanField(row.ed_reasonnotemployed),
+          ed_reasonstayingonjob: cleanField(row.ed_reasonstayingonjob),
+          ed_reasonacceptingthejob: cleanField(row.ed_reasonacceptingthejob),
+          ed_reasonchangingjob: cleanField(row.ed_reasonchangingjob),
+          ed_howfoundfirstjob: cleanField(row.ed_howfoundfirstjob),
+          ed_competencies: cleanField(row.ed_competencies),
         };
       });
 
@@ -442,6 +451,7 @@ router.get('/getSurveySummary', (req, res) => {
     }
   });
 });
+
 
 
 
