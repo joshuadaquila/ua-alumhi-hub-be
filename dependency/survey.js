@@ -638,90 +638,71 @@ router.get('/getModeEmployment', (req, res) => {
 
 router.get('/getCounts', (req, res) => {
   const query = `
-    -- Count of Sex
-    SELECT 'Sex' AS category, sex AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(sex) AS sex
-        FROM generalinformation
-        WHERE sex IS NOT NULL AND TRIM(sex) <> '' 
-        GROUP BY LOWER(sex)
-    ) AS sex_counts
-    GROUP BY sex
-
-    UNION ALL
-
-    -- Count of Age Ranges
-    SELECT 'Age Range' AS category, 
-           CASE
-             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 0 AND 9 THEN '0-9'
-             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 10 AND 19 THEN '10-19'
-             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 20 AND 29 THEN '20-29'
-             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 30 AND 39 THEN '30-39'
-             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 40 AND 49 THEN '40-49'
-             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 50 AND 59 THEN '50-59'
-             WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 60 AND 69 THEN '60-69'
-             ELSE '70+'
-           END AS value,
-           COUNT(*) AS count
-    FROM alumni
-    WHERE birthday IS NOT NULL
-    GROUP BY value
-
-    UNION ALL
-
-    -- Count of Civil Status
-    SELECT 'Civil Status' AS category, civilstatus AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(civilstatus) AS civilstatus
-        FROM generalinformation
-        WHERE civilstatus IS NOT NULL AND TRIM(civilstatus) <> '' 
-        GROUP BY LOWER(civilstatus)
-    ) AS civilstatus_counts
-    GROUP BY civilstatus
-
-    UNION ALL
-
-    -- Count of Region
-    SELECT 'Region' AS category, region AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(region) AS region
-        FROM generalinformation
-        WHERE region IS NOT NULL AND TRIM(region) <> ''  
-        GROUP BY LOWER(region)
-    ) AS region_counts
-    GROUP BY region
-
-    UNION ALL
-
-    -- Count of Province
-    SELECT 'Province' AS category, province AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(province) AS province
-        FROM generalinformation
-        WHERE province IS NOT NULL AND TRIM(province) <> ''  
-        GROUP BY LOWER(province)
-    ) AS province_counts
-    GROUP BY province
-
-    UNION ALL
-
-    -- Count of Residence
-    SELECT 'Residence' AS category, residence AS value, COUNT(*) AS count
-    FROM (
-        SELECT LOWER(residence) AS residence
-        FROM generalinformation
-        WHERE residence IS NOT NULL AND TRIM(residence) <> ''  
-        GROUP BY LOWER(residence)
-    ) AS residence_counts
-    GROUP BY residence
-
-    UNION ALL
-
-    -- Count of Graduation Year
-    SELECT 'Graduation Year' AS category, graduationyear AS value, COUNT(*) AS count
-    FROM alumni
-    WHERE graduationyear IS NOT NULL AND TRIM(graduationyear) <> '' 
-    GROUP BY graduationyear;
+  -- Count of Sex
+  SELECT 'Sex' AS category, LOWER(sex) AS value, COUNT(*) AS count
+  FROM generalinformation
+  WHERE sex IS NOT NULL AND TRIM(sex) <> ''
+  GROUP BY LOWER(sex)
+  
+  UNION ALL
+  
+  -- Count of Age Ranges
+  SELECT 'Age Range' AS category, 
+         CASE
+           WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 0 AND 9 THEN '0-9'
+           WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 10 AND 19 THEN '10-19'
+           WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 20 AND 29 THEN '20-29'
+           WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 30 AND 39 THEN '30-39'
+           WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 40 AND 49 THEN '40-49'
+           WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 50 AND 59 THEN '50-59'
+           WHEN FLOOR(DATEDIFF(CURDATE(), birthday) / 365.25) BETWEEN 60 AND 69 THEN '60-69'
+           ELSE '70+'
+         END AS value,
+         COUNT(*) AS count
+  FROM alumni
+  WHERE birthday IS NOT NULL
+  GROUP BY value
+  
+  UNION ALL
+  
+  -- Count of Civil Status
+  SELECT 'Civil Status' AS category, LOWER(civilstatus) AS value, COUNT(*) AS count
+  FROM generalinformation
+  WHERE civilstatus IS NOT NULL AND TRIM(civilstatus) <> ''
+  GROUP BY LOWER(civilstatus)
+  
+  UNION ALL
+  
+  -- Count of Region
+  SELECT 'Region' AS category, LOWER(region) AS value, COUNT(*) AS count
+  FROM generalinformation
+  WHERE region IS NOT NULL AND TRIM(region) <> ''
+  GROUP BY LOWER(region)
+  
+  UNION ALL
+  
+  -- Count of Province
+  SELECT 'Province' AS category, LOWER(province) AS value, COUNT(*) AS count
+  FROM generalinformation
+  WHERE province IS NOT NULL AND TRIM(province) <> ''
+  GROUP BY LOWER(province)
+  
+  UNION ALL
+  
+  -- Count of Residence
+  SELECT 'Residence' AS category, LOWER(residence) AS value, COUNT(*) AS count
+  FROM generalinformation
+  WHERE residence IS NOT NULL AND TRIM(residence) <> ''
+  GROUP BY LOWER(residence)
+  
+  UNION ALL
+  
+  -- Count of Graduation Year
+  SELECT 'Graduation Year' AS category, graduationyear AS value, COUNT(*) AS count
+  FROM alumni
+  WHERE graduationyear IS NOT NULL AND TRIM(graduationyear) <> ''
+  GROUP BY graduationyear;
+  
   `;
 
   db.query(query, (err, results) => {
