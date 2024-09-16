@@ -4,6 +4,7 @@ const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 const db = require('./db');
 const axios = require('axios')
+const router = express.Router();
 
 const app = express();
 const server = createServer(app);
