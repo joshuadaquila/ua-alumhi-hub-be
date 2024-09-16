@@ -63,6 +63,29 @@ io.on('connection', (socket) => {
             };
 
             io.emit('messageNotification', enrichedMessage); // Send enriched message to all connected clients
+
+            if (true) { // Ensure the user has an Expo Push Token
+              const pushNotificationData = {
+                to: 'ExponentPushToken[ViKtfYKj7Q8c1mqHXRZnc7]', // Expo push token for this user
+                sound: 'default',
+                title: `New message from ${user.name}`,
+                body: message.content,
+                data: { messageId: message.messageid }
+              };
+
+              axios.post('https://exp.host/--/api/v2/push/send', pushNotificationData, {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }).then(response => {
+                console.log('Push notification sent successfully:', response.data);
+              }).catch(error => {
+                console.error('Error sending push notification:', error);
+              });
+            } else {
+              console.log(`No Expo Push Token for user ${user.name}`);
+            }
+
           } else {
             // Handle case where user is not found
             io.emit('messageNotification', message); // Send original message if user details are not found
