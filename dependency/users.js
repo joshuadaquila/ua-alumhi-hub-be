@@ -75,8 +75,7 @@ router.get('/getJobInfo', (req, res) => {
 })
 
 router.post('/addUser', (req, res) => {
-  const {title, message} = req.body;
-  const type = "admin";
+  const {title, message, type} = req.body;
 
   // Get the current date and time
   const now = new Date();

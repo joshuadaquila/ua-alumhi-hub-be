@@ -16,8 +16,8 @@ router.post('/signup', (req, res)=> {
       return res.status(500).send('Internal server error');
     }
 
-    const sql = 'INSERT INTO user (username, password, usertype, status) VALUES (?,?,?, "active")';
-    db.query(sql, [username, hashedPassword, usertype], (err, result) => {
+    const sql = 'INSERT INTO user (username, password, usertype, status) VALUES (?,?,"admin", "active")';
+    db.query(sql, [username, hashedPassword], (err, result) => {
       if (err) {
         console.error('Error executing query:', err);
         return res.status(500).send('Internal server error');
