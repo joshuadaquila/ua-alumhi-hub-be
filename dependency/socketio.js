@@ -67,18 +67,21 @@ io.on('connection', (socket) => {
             io.emit('messageNotification', enrichedMessage); // Send enriched message to all connected clients
 
             try {
-              // Query to get all Expo push tokens from your database
-              const getTokensQuery = 'SELECT token FROM expotoken';
+              // Query to get all Expo push tokens and their associated user IDs from your database
+              const getTokensQuery = 'SELECT userid, token FROM expotoken';
+              
               db.query(getTokensQuery, async (err, tokensResults) => {
                 if (err) {
                   console.error('Error fetching Expo push tokens:', err);
                   return;
                 }
-
-                // Extract tokens from query result
-                const tokens = tokensResults.map(row => row.token);
-
-                // Send push notifications to all tokens
+            
+                // Extract tokens and filter out the sender's token
+                const tokens = tokensResults
+                  .filter(row => row.userid !== userId)  // Exclude the sender's user ID
+                  .map(row => row.token);  // Extract only the token
+            
+                // Send push notifications to all tokens (excluding sender)
                 for (const token of tokens) {
                   const pushNotificationData = {
                     to: token, // Expo push token for this user
@@ -87,7 +90,7 @@ io.on('connection', (socket) => {
                     body: message.content,
                     data: { messageId: message.messageid }
                   };
-
+            
                   try {
                     await axios.post('https://exp.host/--/api/v2/push/send', pushNotificationData, {
                       headers: {
@@ -103,6 +106,7 @@ io.on('connection', (socket) => {
             } catch (error) {
               console.error('Error processing push notifications:', error);
             }
+            
 
           } else {
             // Handle case where user is not found
