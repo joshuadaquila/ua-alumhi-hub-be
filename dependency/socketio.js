@@ -100,4 +100,31 @@ io.on('connection', (socket) => {
   });
 });
 
+router.post('/addExpoToken', (req, res) => {
+  const userId = req.userId;
+  const {data} = req.body;
+
+  const sql = 'INSERT INTO expotoken (userid, token) VALUES (?,?)';
+  db.query(sql, [userId, data], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+})
+
+router.get('/getExpoToken', (req, res) => {
+  const userid = req.userId;
+  const query = `SELECT * from expotoken`;
+  // console.log(query);
+  db.query(query, (err, results) => {
+    if (err) {
+      res.status(400).json({ message: 'Error fetching token' });
+    } else {
+      res.json(results);
+      console.log(results);
+    }
+  });
+})
 module.exports = io;
