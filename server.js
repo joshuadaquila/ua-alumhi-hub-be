@@ -14,6 +14,7 @@ const feed = require('./dependency/feed');
 const survey = require('./dependency/survey');
 const dashboard = require('./dependency/dashboard');
 const profile = require('./dependency/profile');
+const pushNotification = require('./dependency/pushNotification');
 const io = require('./dependency/socketio');
 
 
@@ -169,6 +170,7 @@ app.use('', authenticateToken, feed);
 app.use('', authenticateToken, survey);
 app.use('', authenticateToken, dashboard);
 app.use('', authenticateToken, profile);
+app.use('', authenticateToken, pushNotification);
 
 // Start the server
 const server = app.listen(port, () => {
