@@ -66,26 +66,42 @@ io.on('connection', (socket) => {
 
             io.emit('messageNotification', enrichedMessage); // Send enriched message to all connected clients
 
-            if (true) { // Ensure the user has an Expo Push Token
-              const pushNotificationData = {
-                to: 'ExponentPushToken[ViKtfYKj7Q8c1mqHXRZnc7]', // Expo push token for this user
-                sound: 'default',
-                title: `New message from ${user.name}`,
-                body: message.content,
-                data: { messageId: message.messageid }
-              };
-
-              axios.post('https://exp.host/--/api/v2/push/send', pushNotificationData, {
-                headers: {
-                  'Content-Type': 'application/json'
+            try {
+              // Query to get all Expo push tokens from your database
+              const getTokensQuery = 'SELECT token FROM expotoken';
+              db.query(getTokensQuery, async (err, tokensResults) => {
+                if (err) {
+                  console.error('Error fetching Expo push tokens:', err);
+                  return;
                 }
-              }).then(response => {
-                console.log('Push notification sent successfully:', response.data);
-              }).catch(error => {
-                console.error('Error sending push notification:', error);
+
+                // Extract tokens from query result
+                const tokens = tokensResults.map(row => row.token);
+
+                // Send push notifications to all tokens
+                for (const token of tokens) {
+                  const pushNotificationData = {
+                    to: token, // Expo push token for this user
+                    sound: 'default',
+                    title: `New message from ${user.name}`,
+                    body: message.content,
+                    data: { messageId: message.messageid }
+                  };
+
+                  try {
+                    await axios.post('https://exp.host/--/api/v2/push/send', pushNotificationData, {
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
+                    });
+                    console.log('Push notification sent successfully to:', token);
+                  } catch (error) {
+                    console.error('Error sending push notification to:', token, error);
+                  }
+                }
               });
-            } else {
-              console.log(`No Expo Push Token for user ${user.name}`);
+            } catch (error) {
+              console.error('Error processing push notifications:', error);
             }
 
           } else {
@@ -101,31 +117,4 @@ io.on('connection', (socket) => {
   });
 });
 
-router.post('/addExpoToken', (req, res) => {
-  const userId = req.userId;
-  const {data} = req.body;
-
-  const sql = 'INSERT INTO expotoken (userid, token) VALUES (?,?)';
-  db.query(sql, [userId, data], (err, result) => {
-    if (err) {
-      console.error('Error executing query:', err);
-      return res.status(500).send('Internal server error');
-    }
-    res.send(result);
-  });
-})
-
-router.get('/getExpoToken', (req, res) => {
-  const userid = req.userId;
-  const query = `SELECT * from expotoken`;
-  // console.log(query);
-  db.query(query, (err, results) => {
-    if (err) {
-      res.status(400).json({ message: 'Error fetching token' });
-    } else {
-      res.json(results);
-      console.log(results);
-    }
-  });
-})
 module.exports = io;
