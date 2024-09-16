@@ -94,4 +94,18 @@ router.post('/addUser', (req, res) => {
     res.send(result);
   });
 })
+
+router.post('/addExpoToken', (req, res) => {
+  const userId = req.userId;
+  const {data} = req.body;
+
+  const sql = 'INSERT INTO expotoken (userid, token) VALUES (?,?)';
+  db.query(sql, [userId, data], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+})
 module.exports = router;
