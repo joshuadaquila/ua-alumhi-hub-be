@@ -72,8 +72,7 @@ io.on('connection', (socket) => {
             const notification = {
               headings: { en: 'New Message Received' },
               contents: { en: enrichedMessage.message },
-              // include_player_ids: [user.onesignal_player_id], // Target the recipient
-              // exclude_player_ids: [msg.senderPlayerId] // Exclude the sender (you need to include this ID in your message payload)
+              include_player_ids: [user.onesignal_player_id] // Use the OneSignal player ID of the user
             };
 
             client.createNotification(notification)
