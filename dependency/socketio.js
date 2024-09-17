@@ -73,8 +73,8 @@ io.on('connection', (socket) => {
                 "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63", //9649e634-24e7-4692-bb25-c0fe5d33ce63
                 "headings": { "en": user.name },
                 "contents": { "en": message.content },
-                "exclude_player_ids": [msg.subId],
-                "included_segments": ["Total Subscriptions"],
+                // "exclude_player_ids": [msg.subId],
+                "included_segments": ["Notification Receiver"],
                 "data": {}
               
                // Additional data for Expo notification
