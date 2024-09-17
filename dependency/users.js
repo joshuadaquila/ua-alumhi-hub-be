@@ -93,4 +93,19 @@ router.post('/addUser', (req, res) => {
     res.send(result);
   });
 })
+
+router.post('/setSubId', (req, res) => {
+  const {subscriptionId} = req.body;
+  const userId = req.userId;
+
+  const sql = 'INSERT INTO expotoken (userid, token) VALUES (?,?)';
+  db.query(sql, [subscriptionId, userId], (err, result) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      return res.status(500).send('Internal server error');
+    }
+    res.send(result);
+  });
+})
+
 module.exports = router;
