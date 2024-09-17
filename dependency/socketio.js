@@ -70,8 +70,9 @@ io.on('connection', (socket) => {
             const notification = {
               
                 "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63", //9649e634-24e7-4692-bb25-c0fe5d33ce63
-                "headings": { "en": "New Message Received" },
+                "headings": { "en": "New Message" },
                 "contents": { "en": message.content },
+                "exclude_subscription_ids": [msg.subId],
                 "included_segments": ["Total Subscriptions"],
                 "data": {}
               
