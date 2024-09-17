@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
             // Send push notification
             const notification = {
               app_id: '9649e634-24e7-4692-bb25-c0fe5d33ce63', // Replace with your OneSignal app ID
-              included_segments: ["Subscribed Users"], // Replace with your Expo player IDs
+              included_segments: ["Total Subscriptions"], // Replace with your Expo player IDs
               headings: { en: 'New Message Received' },
               contents: { en: enrichedMessage.message },
               data: { message: enrichedMessage.message } // Additional data for Expo notification
