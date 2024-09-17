@@ -67,23 +67,31 @@ io.on('connection', (socket) => {
 
             // Send push notification
             const notification = {
-              app_id: '9649e634-24e7-4692-bb25-c0fe5d33ce63',
+              app_id: '9649e634-24e7-4692-bb25-c0fe5d33ce63', // Replace with your OneSignal app ID
+              included_segments: ["Subscribed Users"], // Replace with your Expo player IDs
               headings: { en: 'New Message Received' },
               contents: { en: enrichedMessage.message },
-              included_segments: ['Subscribed Users'] // Target all subscribed users
+              data: { message: enrichedMessage.message } // Additional data for Expo notification
             };
 
-            axios.post('https://api.onesignal.com/notifications?c=push', notification, {
+            const options = {
+              method: 'POST',
+              url: 'https://api.onesignal.com/notifications?c=push',
               headers: {
-                'Content-Type': 'application/json',
+                accept: 'application/json',
+                'content-type': 'application/json',
                 'Authorization': `Basic N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw` // Replace with your OneSignal REST API Key
-              }
-            })
-              .then(response => {
-                console.log('Notification sent successfully:', response.data);
+              },
+              data: notification
+            };
+
+            axios
+              .request(options)
+              .then(function (response) {
+                console.log(response.data);
               })
-              .catch(err => {
-                console.error('Error sending notification:', err);
+              .catch(function (error) {
+                console.error(error);
               });
           } else {
             // Handle case where user is not found
