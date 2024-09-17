@@ -80,10 +80,10 @@ app.post('/signup', (req, res) => {
 
 
 app.post('/signin', (req, res) => {
-  console.log("LOGGING IN");
+  // console.log("LOGGING IN");
   const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
+  // console.log(email);
+  // console.log(password);
   const sql = 'SELECT password, alumniid, name FROM alumni WHERE email =? and STATUS = "active"';
   db.query(sql, [email], (err, result) => {
     if (err) {
@@ -98,7 +98,7 @@ app.post('/signin', (req, res) => {
     const hashedPassword = result[0].password;
     const userId = result[0].alumniid;
     const name = result[0].name;
-    console.log(name);
+    // console.log(name);
     bcrypt.compare(password, hashedPassword, (err, isMatch) => {
       if (err) {
         console.error('Error comparing password:', err);
@@ -107,7 +107,7 @@ app.post('/signin', (req, res) => {
 
       if (isMatch) {
         const token = jwt.sign({ userId, name }, SECRET_KEY);
-        console.log(token);
+        // console.log(token);
         res.send({ token, name });
       } else {
         res.status(401).send({ message: 'Invalid password' });
@@ -120,7 +120,7 @@ app.post('/signin', (req, res) => {
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
-  console.log(authHeader);
+  // console.log(authHeader);
   if (!authHeader) {
     console.log("Token verification failed no auth header");
     return res.status(401).send({ message: 'Unauthorized' });
@@ -142,7 +142,7 @@ function authenticateToken(req, res, next) {
     }
     req.userId = decoded.userId;
     req.name = decoded.name
-    console.log("user id", decoded.userId);
+    // console.log("user id", decoded.userId);
     next();
   });
 }
