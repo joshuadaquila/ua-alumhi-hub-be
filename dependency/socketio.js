@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
               included_segments: ['Subscribed Users'] // Target all subscribed users
             };
 
-            axios.post('https://onesignal.com/api/v1/notifications', notification, {
+            axios.post('https://api.onesignal.com/notifications?c=push', notification, {
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Basic N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw` // Replace with your OneSignal REST API Key
