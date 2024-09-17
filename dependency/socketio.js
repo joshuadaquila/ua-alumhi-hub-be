@@ -3,6 +3,10 @@ const cors = require('cors');
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 const db = require('./db');
+const OneSignal = require('onesignal-node');
+
+// Initialize OneSignal client
+const client = new OneSignal.Client('9649e634-24e7-4692-bb25-c0fe5d33ce63', 'N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw');
 
 const app = express();
 const server = createServer(app);
@@ -27,7 +31,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('feedNotification', (msg) => {
-    io.emit('feedNotification', msg); // Send event notification to all connected clients
+    io.emit('feedNotification', msg); // Send feed notification to all connected clients
   });
 
   socket.on('messageNotification', (msg) => {
@@ -63,6 +67,22 @@ io.on('connection', (socket) => {
             };
 
             io.emit('messageNotification', enrichedMessage); // Send enriched message to all connected clients
+
+            // Send push notification
+            const notification = {
+              headings: { en: 'New Message Received' },
+              contents: { en: enrichedMessage.message },
+              // include_player_ids: [user.onesignal_player_id], // Target the recipient
+              // exclude_player_ids: [msg.senderPlayerId] // Exclude the sender (you need to include this ID in your message payload)
+            };
+
+            client.createNotification(notification)
+              .then(response => {
+                console.log('Notification sent successfully:', response.body);
+              })
+              .catch(err => {
+                console.error('Error sending notification:', err);
+              });
           } else {
             // Handle case where user is not found
             io.emit('messageNotification', message); // Send original message if user details are not found
