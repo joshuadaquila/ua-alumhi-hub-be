@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
 
             const options = {
               method: 'POST',
-              url: 'https://api.onesignal.com/notifications',
+              url: 'https://api.onesignal.com/notifications?c=push',
               headers: {
                 accept: 'application/json',
                 'content-type': 'application/json',
