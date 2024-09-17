@@ -44,6 +44,7 @@ io.on('connection', (socket) => {
 
       if (messageResults.length > 0) {
         const message = messageResults[0];
+        console.log("message:", message);
         const userId = message.userid;
 
         // Query to get user details
@@ -68,7 +69,7 @@ io.on('connection', (socket) => {
             // Send push notification
             const notification = {
               
-                "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63",
+                "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63", //9649e634-24e7-4692-bb25-c0fe5d33ce63
                 "headings": { "en": "New Message Received" },
                 "contents": { "en": "Your message content" },
                 "included_segments": ["Total Subscriptions"],
