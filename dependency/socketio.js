@@ -67,11 +67,14 @@ io.on('connection', (socket) => {
 
             // Send push notification
             const notification = {
-              app_id: '9649e634-24e7-4692-bb25-c0fe5d33ce63', // Replace with your OneSignal app ID
-              headings: { en: 'New Message Received' },
-              contents: { en: enrichedMessage.message },
-              included_segments: ["Total Subscriptions"], // Replace with your Expo player IDs
-              data: { message: enrichedMessage.message } // Additional data for Expo notification
+              
+                "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63",
+                "headings": { "en": "New Message Received" },
+                "contents": { "en": "Your message content" },
+                "included_segments": ["Total Subscriptions"],
+                "data": {}
+              
+               // Additional data for Expo notification
             };
 
             const options = {
