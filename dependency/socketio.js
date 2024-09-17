@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
               
                 "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63", //9649e634-24e7-4692-bb25-c0fe5d33ce63
                 "headings": { "en": "New Message Received" },
-                "contents": { "en": "Your message content" },
+                "contents": { "en": message.content },
                 "included_segments": ["Total Subscriptions"],
                 "data": {}
               
