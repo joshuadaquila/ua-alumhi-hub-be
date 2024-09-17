@@ -3,10 +3,7 @@ const cors = require('cors');
 const { createServer } = require('node:http');
 const { Server } = require('socket.io');
 const db = require('./db');
-const OneSignal = require('onesignal-node');
-
-// Initialize OneSignal client
-const client = new OneSignal.Client('9649e634-24e7-4692-bb25-c0fe5d33ce63', 'N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw');
+const axios = require('axios');
 
 const app = express();
 const server = createServer(app);
@@ -70,14 +67,20 @@ io.on('connection', (socket) => {
 
             // Send push notification
             const notification = {
+              app_id: '9649e634-24e7-4692-bb25-c0fe5d33ce63',
               headings: { en: 'New Message Received' },
               contents: { en: enrichedMessage.message },
-              included_segments: ['Subscribed Users'] // Use the OneSignal player ID of the user
+              included_segments: ['Subscribed Users'] // Target all subscribed users
             };
 
-            client.createNotification(notification)
+            axios.post('https://onesignal.com/api/v1/notifications', notification, {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw` // Replace with your OneSignal REST API Key
+              }
+            })
               .then(response => {
-                console.log('Notification sent successfully:', response.body);
+                console.log('Notification sent successfully:', response.data);
               })
               .catch(err => {
                 console.error('Error sending notification:', err);
