@@ -66,6 +66,7 @@ io.on('connection', (socket) => {
 
             io.emit('messageNotification', enrichedMessage); // Send enriched message to all connected clients
 
+            console.log("excluding", msg.subId);
             // Send push notification
             const notification = {
               
