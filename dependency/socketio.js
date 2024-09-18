@@ -44,7 +44,6 @@ io.on('connection', (socket) => {
 
       if (messageResults.length > 0) {
         const message = messageResults[0];
-        console.log("message:", message);
         const userId = message.userid;
 
         // Query to get user details
@@ -67,39 +66,51 @@ io.on('connection', (socket) => {
             io.emit('messageNotification', enrichedMessage); // Send enriched message to all connected clients
 
             console.log("excluding", msg.subId);
-            // Send push notification
-            const notification = {
-              
-                "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63", //9649e634-24e7-4692-bb25-c0fe5d33ce63
-                "headings": { "en": user.name },
-                "contents": { "en": message.content },
-                // "exclude_player_ids": [msg.subId],
-                // "included_segments": ["Total Subscriptions"],
-                "include_subscription_ids": [msg.subId],
-                "data": {}
-              
-               // Additional data for Expo notification
-            };
 
-            const options = {
-              method: 'POST',
-              url: 'https://api.onesignal.com/notifications?c=push',
-              headers: {
-                accept: 'application/json',
-                'content-type': 'application/json',
-                'Authorization': `Basic N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw` // Replace with your OneSignal REST API Key
-              },
-              data: notification
-            };
+            // Query to get all expo tokens
+            const getTokensQuery = 'SELECT subId FROM expotoken';
+            db.query(getTokensQuery, (err, tokenResults) => {
+              if (err) {
+                console.error('Error fetching tokens:', err);
+                return;
+              }
 
-            axios
-              .request(options)
-              .then(function (response) {
-                console.log(response.data);
-              })
-              .catch(function (error) {
-                console.error(error);
+              // Filter tokens, excluding the sender's subId
+              const tokensToNotify = tokenResults
+                .map(token => token.subId)
+                .filter(subId => subId !== msg.subId);
+
+              // Loop through the filtered tokens and send notifications
+              tokensToNotify.forEach(subId => {
+                const notification = {
+                  "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63", // OneSignal app ID
+                  "headings": { "en": user.name },
+                  "contents": { "en": message.content },
+                  "include_subscription_ids": [subId], // Send notification to the current token
+                  "data": {}
+                };
+
+                const options = {
+                  method: 'POST',
+                  url: 'https://api.onesignal.com/notifications?c=push',
+                  headers: {
+                    accept: 'application/json',
+                    'content-type': 'application/json',
+                    'Authorization': `Basic N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw` // Replace with your OneSignal REST API Key
+                  },
+                  data: notification
+                };
+
+                axios
+                  .request(options)
+                  .then(function (response) {
+                    console.log('Notification sent to:', subId, response.data);
+                  })
+                  .catch(function (error) {
+                    console.error('Error sending notification:', error);
+                  });
               });
+            });
           } else {
             // Handle case where user is not found
             io.emit('messageNotification', message); // Send original message if user details are not found
