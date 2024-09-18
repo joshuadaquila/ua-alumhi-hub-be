@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
             console.log("excluding", msg.subId);
 
             // Query to get all expo tokens
-            const getTokensQuery = 'SELECT subId FROM expotoken';
+            const getTokensQuery = 'SELECT token FROM expotoken';
             db.query(getTokensQuery, (err, tokenResults) => {
               if (err) {
                 console.error('Error fetching tokens:', err);
