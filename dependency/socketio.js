@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
 
               // Filter tokens, excluding the sender's subId
               const tokensToNotify = tokenResults
-                .map(token => token.subId)
+                .map(token => token.token)
                 .filter(subId => subId !== msg.subId);
 
               // Loop through the filtered tokens and send notifications
@@ -89,6 +89,8 @@ io.on('connection', (socket) => {
                   "include_subscription_ids": [subId], // Send notification to the current token
                   "data": {}
                 };
+
+                console.log(notification);
 
                 const options = {
                   method: 'POST',
