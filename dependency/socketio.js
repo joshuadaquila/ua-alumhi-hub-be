@@ -74,7 +74,8 @@ io.on('connection', (socket) => {
                 "headings": { "en": user.name },
                 "contents": { "en": message.content },
                 // "exclude_player_ids": [msg.subId],
-                "included_segments": ["Notification Receiver"],
+                // "included_segments": ["Total Subscriptions"],
+                "include_subscription_ids": [msg.subId],
                 "data": {}
               
                // Additional data for Expo notification
