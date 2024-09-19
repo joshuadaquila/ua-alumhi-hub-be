@@ -264,4 +264,24 @@ router.get('/getMyFeed', (req, res) => {
   });
 });
 
+router.get('/getMyFeed/:id', (req, res) => {
+  console.log("get myfeed is fetched")
+  const userId = req.params.id;
+  const query = `SELECT f.content, f.datestamp, f.photourl, f.feedid,
+    a.name, a.photourl as "profilepic" 
+    FROM feed f
+    INNER JOIN alumni a
+    ON f.alumniid = a.alumniid
+    WHERE f.status = "active" and f.alumniid = ${userId}
+    order by feedid desc`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.log("ERROR GET FEED", err);
+      res.status(400).json({ message: 'Error fetching feed' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
 module.exports = router;

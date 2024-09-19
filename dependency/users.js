@@ -88,6 +88,20 @@ router.get('/getJobInfo', (req, res) => {
   });
 })
 
+router.get('/getJobInfo/:id', (req, res) => {
+  const userid = req.params.id
+  const query = `SELECT presentoccupation FROM employmentdata WHERE alumniid = ${userid}`;
+  console.log(query);
+  db.query(query, (err, results) => {
+    if (err) {
+      res.status(400).json({ message: 'Error fetching users' });
+    } else {
+      res.json(results);
+      console.log(results);
+    }
+  });
+})
+
 router.post('/addUser', (req, res) => {
   const {title, message, type} = req.body;
 
