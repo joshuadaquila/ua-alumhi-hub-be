@@ -60,6 +60,20 @@ router.get('/getAlumniInfo', (req, res) => {
   });
 })
 
+router.get('/getAlumniInfo/:id', (req, res) => {
+  const userid = req.params.id;
+  const query = `SELECT * FROM alumni WHERE status = "active" and alumniid = ${userid}`;
+  console.log(query);
+  db.query(query, (err, results) => {
+    if (err) {
+      res.status(400).json({ message: 'Error fetching users' });
+    } else {
+      res.json(results);
+      console.log(results);
+    }
+  });
+})
+
 router.get('/getJobInfo', (req, res) => {
   const userid = req.userId;
   const query = `SELECT presentoccupation FROM employmentdata WHERE alumniid = ${userid}`;
