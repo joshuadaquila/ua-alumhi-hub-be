@@ -101,7 +101,7 @@ router.delete('/deletePost/:feedid', async (req, res) => {
 
 router.get('/getFeed', (req, res) => {
   // console.log("get events is fetched")
-  const query = `SELECT f.content, f.datestamp, f.photourl, f.feedid, a.alumniid,
+  const query = `SELECT f.content, f.datestamp, f.photourl, f.feedid, a.alumniid, 
     a.name, a.photourl as "profilepic" 
     FROM feed f
     INNER JOIN alumni a
