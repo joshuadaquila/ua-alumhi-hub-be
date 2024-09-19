@@ -226,7 +226,7 @@ router.post('/addComment', (req, res) => {
 router.get('/getComments/:feedid', (req, res) => {
   const feedid = req.params.feedid;
   const query = `
-    SELECT c.commentid, c.content, c.date, a.name, a.photourl,
+    SELECT c.commentid, c.content, c.date, a.name, a.photourl 
     FROM comment c
     INNER JOIN alumni a ON c.alumniid = a.alumniid
     WHERE c.status = "active" AND c.feedid = ?
