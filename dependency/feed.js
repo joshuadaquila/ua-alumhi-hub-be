@@ -101,7 +101,7 @@ router.delete('/deletePost/:feedid', async (req, res) => {
 
 router.get('/getFeed', (req, res) => {
   // console.log("get events is fetched")
-  const query = `SELECT f.content, f.datestamp, f.photourl, f.feedid,
+  const query = `SELECT f.content, f.datestamp, f.photourl, f.feedid, a.alumniid
     a.name, a.photourl as "profilepic" 
     FROM feed f
     INNER JOIN alumni a
@@ -226,7 +226,7 @@ router.post('/addComment', (req, res) => {
 router.get('/getComments/:feedid', (req, res) => {
   const feedid = req.params.feedid;
   const query = `
-    SELECT c.commentid, c.content, c.date, a.name, a.photourl, a.alumniid
+    SELECT c.commentid, c.content, c.date, a.name, a.photourl,
     FROM comment c
     INNER JOIN alumni a ON c.alumniid = a.alumniid
     WHERE c.status = "active" AND c.feedid = ?
