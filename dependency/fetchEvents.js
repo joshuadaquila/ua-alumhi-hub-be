@@ -45,7 +45,6 @@ router.get('/getHappeningEvents', (req, res) => {
   SELECT * 
   FROM events 
   WHERE date = CURDATE() 
-    AND CURTIME() BETWEEN time AND endtime 
     AND status = "active" 
   ORDER BY eventid DESC;
 `;
