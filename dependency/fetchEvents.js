@@ -42,12 +42,12 @@ router.get('/getPastEvents', (req, res) => {
 
 router.get('/getHappeningEvents', (req, res) => {
   const query = `
-  SELECT * 
-  FROM events 
-  WHERE date = CURDATE() 
-    AND status = "active" 
-  ORDER BY eventid DESC;
-`;
+    SELECT * 
+    FROM events 
+    WHERE DATE(CONVERT_TZ(NOW(), '+00:00', '+08:00')) = date 
+      AND status = 'active' 
+    ORDER BY eventid DESC;
+  `;
 
   db.query(query, (err, results) => {
     if (err) {
@@ -56,7 +56,8 @@ router.get('/getHappeningEvents', (req, res) => {
       res.json(results);
     }
   });
-});;
+});
+
 
 router.post('/addEvent', (req, res) => {
   const userId = req.userId;
