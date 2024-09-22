@@ -19,7 +19,14 @@ router.get('/getEvents', (req, res) => {
 });
 
 router.get('/getFutureEvents', (req, res) => {
-  const query = 'SELECT e.*, COUNT(r.registrationid) AS totalRegistration FROM events e LEFT JOIN registration r ON e.eventid = r.eventid WHERE e.date > CURDATE() GROUP BY e.eventid ORDER BY e.eventid DESC;';
+  const query = `
+    SELECT e.*, COUNT(r.registrationid) AS totalRegistration 
+    FROM events e 
+    LEFT JOIN registration r ON e.eventid = r.eventid 
+    WHERE e.date > DATE(CONVERT_TZ(NOW(), '+00:00', '+08:00')) 
+    GROUP BY e.eventid 
+    ORDER BY e.eventid DESC;
+  `;
   db.query(query, (err, results) => {
     if (err) {
       res.status(400).json({ message: 'Error fetching events' });
@@ -30,7 +37,15 @@ router.get('/getFutureEvents', (req, res) => {
 });
 
 router.get('/getPastEvents', (req, res) => {
-  const query = 'SELECT e.*, COUNT(r.registrationid) AS totalRegistration FROM events e LEFT JOIN registration r ON e.eventid = r.eventid WHERE e.date <= CURDATE() AND e.status = "active" GROUP BY e.eventid ORDER BY e.eventid DESC;';
+  const query = `
+    SELECT e.*, COUNT(r.registrationid) AS totalRegistration 
+    FROM events e 
+    LEFT JOIN registration r ON e.eventid = r.eventid 
+    WHERE e.date <= DATE(CONVERT_TZ(NOW(), '+00:00', '+08:00')) 
+      AND e.status = "active" 
+    GROUP BY e.eventid 
+    ORDER BY e.eventid DESC;
+  `;
   db.query(query, (err, results) => {
     if (err) {
       res.status(400).json({ message: 'Error fetching events' });
@@ -39,6 +54,7 @@ router.get('/getPastEvents', (req, res) => {
     }
   });
 });
+
 
 router.get('/getHappeningEvents', (req, res) => {
   const query = `
