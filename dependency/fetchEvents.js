@@ -23,6 +23,7 @@ router.get('/getFutureEvents', (req, res) => {
     SELECT e.*, COUNT(r.registrationid) AS totalRegistration 
     FROM events e 
     LEFT JOIN registration r ON e.eventid = r.eventid 
+    INNER JOIN alumni a ON r.alumniid = a.alumniid 
     WHERE e.date > DATE(CONVERT_TZ(NOW(), '+00:00', '+08:00')) 
     GROUP BY e.eventid 
     ORDER BY e.eventid DESC;
@@ -41,8 +42,9 @@ router.get('/getPastEvents', (req, res) => {
     SELECT e.*, COUNT(r.registrationid) AS totalRegistration 
     FROM events e 
     LEFT JOIN registration r ON e.eventid = r.eventid 
+    INNER JOIN alumni a ON r.alumniid = a.alumniid 
     WHERE e.date <= DATE(CONVERT_TZ(NOW(), '+00:00', '+08:00')) 
-      AND e.status = "active" 
+      AND e.status = 'active' 
     GROUP BY e.eventid 
     ORDER BY e.eventid DESC;
   `;
