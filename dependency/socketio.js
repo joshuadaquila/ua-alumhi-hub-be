@@ -25,6 +25,37 @@ io.on('connection', (socket) => {
   socket.on('eventNotification', (msg) => {
     console.log('Event message:', msg);
     io.emit('eventNotification', msg); // Send event notification to all connected clients
+
+    const notification = {
+      "app_id": "9649e634-24e7-4692-bb25-c0fe5d33ce63", // OneSignal app ID
+      "headings": { "en": "UA Alumni Engagement Hub" },
+      "contents": { "en": "New event is added. Check it out!" },
+      "included_segments": "Total Subscriptions", // Send notification to the current token
+      "data": {}
+    };
+
+    console.log(notification);
+
+    const options = {
+      method: 'POST',
+      url: 'https://api.onesignal.com/notifications?c=push',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        'Authorization': `Basic N2ZlM2MxY2EtYmFkMi00Mzg2LTk5NzEtNDE5OTZlNzU2YzQw` // Replace with your OneSignal REST API Key
+      },
+      data: notification
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        console.log('Notification sent to:', subId, response.data);
+      })
+      .catch(function (error) {
+        console.error('Error sending notification:', error);
+      });
+    
   });
 
   socket.on('feedNotification', (msg) => {
